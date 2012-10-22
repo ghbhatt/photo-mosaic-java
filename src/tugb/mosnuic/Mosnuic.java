@@ -75,6 +75,8 @@ public class Mosnuic {
 		}
 
 		System.out.println("Target image processed.");
+		
+		if((tiles.size()* repetition) >= cells.size()){
 
 		ArrayList<String> outputList = new ArrayList<String>();
 		double diff = 0.0;
@@ -121,7 +123,12 @@ public class Mosnuic {
 		System.out.println(totalTime);
 		}
 		else {
-			System.out.println("INVALID INPUTS");
+			System.out.println("Invalid inputs.");
+			System.exit(0);
+		}
+		}else {
+			System.out.println("Not enough tiles.");
+			System.exit(0);
 		}
 
 	}
