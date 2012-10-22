@@ -14,7 +14,7 @@ import javax.imageio.ImageIO;
 public class SplitTarget {
 
 
-	public void split(String filePath, int height, int width, String tempFolderOfTargetSplitLocation) throws IOException {
+	public void split(String filePath,String targetImageFileFormat, int height, int width, String tempFolderOfTargetSplitLocation) throws IOException {
 		
 		int x = 0 ; // used in the loops
 		int y = 0 ;
@@ -60,13 +60,13 @@ public class SplitTarget {
 
 		for (i = 0; i < bi.length; i++) {
 			//split target image, and store it in a temp folder
-			ImageIO.write(bi[i], "jpg", new File(tempFolderOfTargetSplitLocation + form.format(i) + ".jpg"));
+			ImageIO.write(bi[i], targetImageFileFormat, new File(tempFolderOfTargetSplitLocation + form.format(i) + "." + targetImageFileFormat));
 			
 		}
 
 	}
 
-	protected void  renderOutputImage(String filePath, int tileHeight, int tileWidth, ArrayList<String> outputList, String outputFileLocation) throws IOException {
+	protected void  renderOutputImage(String filePath, int tileHeight, int tileWidth, ArrayList<String> outputList, String outputFileLocation, String outputFileFormat) throws IOException {
 		
 		int num = 0;  
 		int i = 0; 
@@ -116,7 +116,7 @@ public class SplitTarget {
 		}  
 		System.out.println("Final Image created.");  
 		try {
-			ImageIO.write(finalImg, "jpeg", new File(outputFileLocation));
+			ImageIO.write(finalImg,outputFileFormat, new File(outputFileLocation));
 		} catch (IOException e) {
 			e.printStackTrace();
 		} 

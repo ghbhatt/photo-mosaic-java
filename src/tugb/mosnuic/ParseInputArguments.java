@@ -70,8 +70,11 @@ public class ParseInputArguments {
 		outputImageFileFormat = targetImageFileFormat;
 		
 		if(OutputImagePathFound != 0){
-			if(outputImageFilePath.lastIndexOf('.') != -1)
-				outputImageFileFormat = outputImageFilePath.substring(outputImageFilePath.lastIndexOf('.'));
+			if(outputImageFilePath.lastIndexOf('.') != -1){
+				int pos = outputImageFilePath.lastIndexOf('.');
+				outputImageFileFormat = outputImageFilePath.substring(pos+1);
+			}
+				
 		}
 		
 	}
@@ -166,7 +169,8 @@ public class ParseInputArguments {
 					}
 					else
 						targetImageFilePath = args[i];
-					targetImageFileFormat = args[i].substring(args[i].lastIndexOf('.'));
+						int posTarget = args[i].lastIndexOf('.');
+					targetImageFileFormat = args[i].substring(posTarget+1);
 				}
 				else
 				{
