@@ -131,7 +131,6 @@ public class Mosnuic {
 				}
 			SplitTarget oi = new SplitTarget();
 			oi.renderOutputImage(targetImage, tiles.get(0).getTileHeight(), tiles.get(0).getTileWidth(), outputList, outputFileLocation);
-			System.out.println("hashmap :" + imageCount);
 			long endTime   = System.currentTimeMillis();
 			long totalTime = endTime - startTime;
 			System.out.println(totalTime);
