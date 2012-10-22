@@ -8,12 +8,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Mosnuic {
+	
+	static HashMap <String,Integer> imageCount = new HashMap<String,Integer>();
 
 	public static void main(String[] args) throws IOException {
 
 		/* Check input arguments */
 		if (args.length < 4 || args.length > 4){
-			System.out.println("Please enter output in the following format\nfile1 dir2 -o file3");
+			System.out.println("Please enter output in the following format file1 dir2 -o file3");
 			System.exit(0);
 		}
 		
@@ -37,6 +39,7 @@ public class Mosnuic {
 		else
 		{	
 			/* initializing variables and objects.*/
+			long startTime = System.currentTimeMillis();
 			ArrayList<ImageInfo> tiles = new ArrayList<ImageInfo>();
 			String targetImage  = args[0]; 
 			String tileLibrary = args[1]; 
@@ -97,14 +100,41 @@ public class Mosnuic {
 			for(i=0;i<cells.size(); i++) {
 				Map <Double,String> rgbDiff = new HashMap<Double,String>();
 				for(j=0;j<tiles.size(); j++) {
+					
 					diff = compareImages(cells.get(i),tiles.get(j));
 					rgbDiff.put(diff, tiles.get(j).filePath);
 					}
 				double min = Collections.min(rgbDiff.keySet());
-				outputList.add(rgbDiff.get(min));
+				if(i==0){
+					outputList.add(rgbDiff.get(min));
+					}
+					else if(i!=0 && countOccurances(rgbDiff.get(min)) < 10000){
+					outputList.add(rgbDiff.get(min));
+					}
+					else{
+					//so finally if the tile has been repeated X number of times, remove it from rgbDiff
+					//Find the next minimum from the rgbdiff hashmap, and it would've been repeated less times
+					//than the tile we just removed, because if it repeated more times, it'd have been deleted in the previous iteration
+					for (int k=0;k<tiles.size();k++) {
+						if(tiles.get(k).getFilePath()==rgbDiff.get(min)){
+							tiles.remove(k);		// remove from tiles
+						}
+					}
+						
+					rgbDiff.remove(min); // remove from the hashmap created for each cell in constant time.
+					//Find the next min from hashmap
+					double min_updated = Collections.min(rgbDiff.keySet());
+					//Use that for  output list
+					outputList.add(rgbDiff.get(min_updated));
+					}
+				
 				}
 			SplitTarget oi = new SplitTarget();
 			oi.renderOutputImage(targetImage, tiles.get(0).getTileHeight(), tiles.get(0).getTileWidth(), outputList, outputFileLocation);
+			System.out.println("hashmap :" + imageCount);
+			long endTime   = System.currentTimeMillis();
+			long totalTime = endTime - startTime;
+			System.out.println(totalTime);
 		}
 	}
 
@@ -164,4 +194,14 @@ public class Mosnuic {
 		}
 		return directory.delete();
 	}
+	
+	public static Integer countOccurances(String string){
+		if(!imageCount.containsKey(string)){
+		imageCount.put(string, 0);
+		}
+		if(imageCount.containsKey(string)){
+		imageCount.put(string, imageCount.get(string)+1);
+		}
+		return imageCount.get(string);
+		}
 }
