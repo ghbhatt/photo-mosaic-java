@@ -9,7 +9,7 @@ public class ParseInputArguments {
 	private static int maxNumberOfTiles = 10000;
 	private static String targetImageFileFormat;
 	private static String outputImageFileFormat;
-	private static String targetImageFileParent;
+	/*private static String targetImageFileParent;*/
 
 	static boolean TargetImagePathFound = false;
 	static int OutputImagePathFound = 0;
@@ -312,8 +312,9 @@ public class ParseInputArguments {
 		boolean chkJPG = path.endsWith(".jpg");
 		boolean chkPNG = path.endsWith(".png"); 
 		boolean chkTIFF = path.endsWith(".tiff");
+		boolean chkTIF = path.endsWith(".tif");
 		
-		return (chkBMP || chkGIF || chkJPEG || chkJPG || chkPNG || chkTIFF);
+		return (chkBMP || chkGIF || chkJPEG || chkJPG || chkPNG || chkTIFF || chkTIF);
 	}
 
 	/*Getter functions for all private members*/

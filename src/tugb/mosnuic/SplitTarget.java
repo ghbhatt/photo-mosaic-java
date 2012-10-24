@@ -3,7 +3,6 @@ package tugb.mosnuic;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -38,14 +37,18 @@ public class SplitTarget {
 
 		/*Define an Image array to hold totalCells in the image*/
 		int count = 0;
+
 		BufferedImage bi[] = new BufferedImage[totalCells];
 
 		/*fill image array with the split image*/
 		for (x = 0; x < rows; x++) {
 			for (y = 0; y < cols; y++) {
 				//Initialize the image array with image totalCells
-				bi[count] = new BufferedImage(cellWidth, cellHeight, image.getType());
-
+				if(image.getType() == 0) {
+					bi[count] = new BufferedImage(cellWidth, cellHeight, 5);
+				} else {
+					bi[count] = new BufferedImage(cellWidth, cellHeight, image.getType());
+				}
 				// draw each cell of the image
 				Graphics2D gr = bi[count++].createGraphics();
 				gr.drawImage(image, 0, 0, cellWidth, cellHeight, cellWidth * y, cellHeight * x, cellWidth * y + cellWidth, cellHeight * x + cellHeight, null);
@@ -102,8 +105,9 @@ public class SplitTarget {
 			}  
 		}  
 		int type = buffImages[0].getType();
-
-		BufferedImage finalImg = new BufferedImage(cellWidth*cols, cellHeight*rows, type);  
+		
+		BufferedImage finalImg = new BufferedImage(cellWidth*cols, cellHeight*rows, type);
+		
 
 		//renders the output image.
 		for (i = 0; i < rows; i++) {  
