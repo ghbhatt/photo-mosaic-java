@@ -7,8 +7,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-
-
 import javax.imageio.ImageIO;
 
 public class SplitTarget {
