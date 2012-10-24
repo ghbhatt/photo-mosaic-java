@@ -20,8 +20,8 @@ public class SplitTarget {
 		
 		/*Load target image into memory*/
 		File file = new File(filePath);
-		FileInputStream fis = new FileInputStream(file);
-		BufferedImage image = ImageIO.read(fis);
+		//FileInputStream fis = new FileInputStream(file);
+		BufferedImage image = ImageIO.read(file);
 
 		/* calculate target image dimensions*/
 		int targetImageHeight = image.getHeight();
@@ -71,8 +71,8 @@ public class SplitTarget {
 		int j = 0;
 		/*Load target image into memory*/
 		File file = new File(filePath);
-		FileInputStream fis = new FileInputStream(file);
-		BufferedImage targetImage = ImageIO.read(fis);
+		//FileInputStream fis = new FileInputStream(file);
+		BufferedImage targetImage = ImageIO.read(file);
 
 		// target image dimensions
 		int targetImageHeight = targetImage.getHeight();
