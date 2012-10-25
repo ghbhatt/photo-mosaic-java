@@ -18,7 +18,7 @@ public class ParseInputArguments {
 
 	static String ERROR = "Please enter input in the following format\nfile1 dir2 [-o file3] [-r n4]";
 	static String OUTPUT_SUFFIX = "_out";
-			
+
 	public boolean ParsePath(String args[]){
 
 		/*Check if argument count is less than 2 or a multiple of 2*/
@@ -27,20 +27,21 @@ public class ParseInputArguments {
 		/*Check for any repeated occurrences of flags*/
 		checkRepeatedFlags(args);
 
-		/* Main function to parse the Input arguments and check them */
+		/* Main method to parse the Input arguments and check them */
 		boolean finalCheck = checkArgs(args);
 
-		/* Function to check if mandatory inputs are present */
+		/* Method to check if mandatory inputs are present */
 		checkMandatoryInputs();
-			
-		findOutputImageFileFormat();
-		
-		constructOutputImagePath();
-		
-		return finalCheck;
 
+		/* Method to find the file format of the output image */
+		findOutputImageFileFormat();
+
+		/* Method to construct the file path for the output image */
+		constructOutputImagePath();
+
+		return finalCheck;
 	}
-	
+
 	private void constructOutputImagePath() {
 		/*Construct O/P filename if -o is absent */
 		if(OutputImagePathFound==0){
@@ -49,37 +50,32 @@ public class ParseInputArguments {
 		}
 		if(OutputImagePathFound==1){
 			if(outputImageFilePath.lastIndexOf('.') == -1)
-				outputImageFilePath = new String(targetImageFilePath.substring(0, targetImageFilePath.lastIndexOf(File.separatorChar)) +File.separatorChar +
+				outputImageFilePath = new String(targetImageFilePath.substring(0,
+						targetImageFilePath.lastIndexOf(File.separatorChar)) +File.separatorChar +
 						outputImageFilePath + "."+outputImageFileFormat);
 			else{
-				outputImageFilePath = new String(targetImageFilePath.substring(0, targetImageFilePath.lastIndexOf(File.separatorChar)) +File.separatorChar + 
+				outputImageFilePath = new String(targetImageFilePath.substring(0,
+						targetImageFilePath.lastIndexOf(File.separatorChar)) +File.separatorChar + 
 						outputImageFilePath);
-			}
-				
-				
+			}								
 		}
 		if(OutputImagePathFound==2){
 			if(outputImageFilePath.lastIndexOf('.') == -1)
-				outputImageFilePath = new String(outputImageFilePath + outputImageFileFormat);
-				
-		}
-		
+				outputImageFilePath = new String(outputImageFilePath + outputImageFileFormat);				
+		}		
 	}
 
 	private void findOutputImageFileFormat() {
-		outputImageFileFormat = targetImageFileFormat;
-		
+		outputImageFileFormat = targetImageFileFormat;		
 		if(OutputImagePathFound != 0){
 			if(outputImageFilePath.lastIndexOf('.') != -1){
 				int pos = outputImageFilePath.lastIndexOf('.');
 				outputImageFileFormat = outputImageFilePath.substring(pos+1);
-			}
-				
-		}
-		
+			}				
+		}		
 	}
 
-	/*Function simply checks if the TargetImagePath and TileLibraryDirectory have been specified in the inputs*/
+	/*Method simply checks if the TargetImagePath and TileLibraryDirectory have been specified in the inputs*/
 	private void checkMandatoryInputs() {
 		if(TargetImagePathFound == false || TileDirectoryPathFound == false){
 			System.out.println(ERROR);
@@ -92,7 +88,7 @@ public class ParseInputArguments {
 	private void checkRepeatedFlags(String[] args) {
 		int count_o = 0;
 		int count_r = 0;
-		
+
 		/*Calculate count of each flags available*/
 		for(int i=0;i<args.length;i++){
 			if(args[i].equals("-o"))
@@ -100,14 +96,13 @@ public class ParseInputArguments {
 			if(args[i].equals("-r"))
 				count_r++;
 		}
-		
+
 		/*If count > 1 throw error and terminate*/
 		if(count_o > 1 || count_r > 1){
 			System.out.println("ERROR");
 			System.out.println("Flags repeated");
 			System.exit(0);		
 		}
-
 	}
 
 	/*Function to check number of arguments. It should be atleast 2 and a multiple of 2*/
@@ -119,24 +114,22 @@ public class ParseInputArguments {
 			System.out.println("Invalid number of arguments");
 			System.exit(0);		
 		}
-
 	}
-	
+
 	public enum INPUT_TYPE {
 		FLAG,
 		FILE,
 		DIR,
-		ERROR
-		
+		ERROR		
 	}
-	
+
 	/*Main function that parses all the inputs*/
 	public static boolean checkArgs(String[] args){
 
 		/*Initialize variables*/
 		int i;
 		boolean result = true;
-		
+
 		/*Determines input type which is either a FLAG, FILE, DIR. If neither then throw error and terminate*/
 		for(i=0;i<args.length;i++){
 			String inputType = checkInputType(args[i]);
@@ -151,8 +144,7 @@ public class ParseInputArguments {
 						System.exit(0);
 						result = false;
 					}
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
+				} catch (Exception e) {					
 					System.out.println(ERROR);
 					System.out.println("Please check flag arguments");
 					System.exit(0);
@@ -169,8 +161,8 @@ public class ParseInputArguments {
 					}
 					else
 						targetImageFilePath = args[i];
-						int posTarget = args[i].lastIndexOf('.');
-						targetImageFileFormat = args[i].substring(posTarget+1);
+					int posTarget = args[i].lastIndexOf('.');
+					targetImageFileFormat = args[i].substring(posTarget+1);
 				}
 				else
 				{
@@ -187,7 +179,7 @@ public class ParseInputArguments {
 					if(args[i].lastIndexOf(File.separatorChar) == -1){
 						File temp = new File(args[i]);
 						tileDirectory = new String(temp.getAbsolutePath());
-						System.out.println(tileDirectory);
+						//System.out.println(tileDirectory);
 					}
 					else
 						tileDirectory = args[i];
@@ -207,19 +199,15 @@ public class ParseInputArguments {
 			}
 		}
 		return result;
-
-
 	}
-	
+
 	/*If input is a flag, this function checks the argument following the flag*/
 	private static boolean checkFlagArgs(String flag, String value) {
-		boolean returnType = false;
-		
+		boolean returnType = false;		
 		if(flag.equals("-o"))
 			returnType = checkFlag_O(value);
 		if(flag.equals("-r"))
-			returnType = checkFlag_R(value);
-		
+			returnType = checkFlag_R(value);		
 		return returnType;		
 	}
 
@@ -236,7 +224,7 @@ public class ParseInputArguments {
 			return false;
 		}
 	}
-	
+
 	/*Function to check in case of -o */
 	public static boolean checkFlag_O(String args3){
 		String targetPath = new String(args3);
@@ -261,11 +249,9 @@ public class ParseInputArguments {
 		else if(args3.lastIndexOf('.')==-1){
 			OutputImagePathFound = 1;
 			outputImageFilePath = args3;
-			return true;
-			
+			return true;			
 		}
 		return false;
-
 	}
 
 	/*Determines input type which is either a FLAG, FILE, DIR. If neither then default is ERROR*/
@@ -276,14 +262,10 @@ public class ParseInputArguments {
 			inputType = "FLAG";
 		if(checkTargetImagePath(arg))
 			inputType = "FILE";
-
 		if(checkTileDirectory(arg))
 			inputType = "DIR";
-
 		//System.out.println(arg+"\t"+inputType);
-
 		return inputType;
-
 	}
 
 	/*Checking for TileDirectory. Should exist, be a directory and not be empty*/
@@ -300,7 +282,6 @@ public class ParseInputArguments {
 				System.exit(0);
 			}
 		}
-
 		return (chkExists && chkDir && isNotEmpty);
 	}
 
@@ -310,7 +291,6 @@ public class ParseInputArguments {
 		boolean chkExists = cliTargetImage.exists();
 		boolean chkFile = cliTargetImage.isFile();
 		boolean chkFileTypes = checkFileTypes(path);
-
 		return (chkExists && chkFile && chkFileTypes);
 	}
 
@@ -322,44 +302,42 @@ public class ParseInputArguments {
 		boolean chkJPG = path.endsWith(".jpg");
 		boolean chkPNG = path.endsWith(".png"); 
 		boolean chkTIFF = path.endsWith(".tiff");
-		boolean chkTIF = path.endsWith(".tif");
-		
+		boolean chkTIF = path.endsWith(".tif");		
 		return (chkBMP || chkGIF || chkJPEG || chkJPG || chkPNG || chkTIFF || chkTIF);
 	}
 
 	/*Getter functions for all private members*/
 	public String getTargetImageFilePath()
 	{
-		System.out.println("TargetImageFilePath\t "+targetImageFilePath);
+		//System.out.println("TargetImageFilePath\t "+targetImageFilePath);
 		return targetImageFilePath;
 	}
-	
+
 	public String getTileDirectory()
 	{
-		System.out.println("TileDirectory\t"+tileDirectory);
+		//System.out.println("TileDirectory\t"+tileDirectory);
 		return tileDirectory;
 	}
-	
+
 	public int getMaxNumberOfTiles()
 	{
-		System.out.println("MaxNumberOfTilesRepeated\t"+maxNumberOfTiles);
+		//System.out.println("MaxNumberOfTilesRepeated\t"+maxNumberOfTiles);
 		return maxNumberOfTiles;
 	}
-	
+
 	public String getTargetImageFileFormat(){
-		System.out.println("TargetImageFileFormat\t"+targetImageFileFormat);
+		//System.out.println("TargetImageFileFormat\t"+targetImageFileFormat);
 		return targetImageFileFormat;
 	}
-	
+
 	public String getOutputImageFileFormat(){
-		System.out.println("OutputImageFileFormat\t"+outputImageFileFormat);
+		//System.out.println("OutputImageFileFormat\t"+outputImageFileFormat);
 		return outputImageFileFormat;
 	}
-	
+
 	public String getOutputImageFilePath(){
-		System.out.println("OutputImageFilePath\t"+outputImageFilePath);
+		//System.out.println("OutputImageFilePath\t"+outputImageFilePath);
 		return outputImageFilePath;
-	}
-	
+	}	
 }
 

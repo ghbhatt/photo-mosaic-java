@@ -10,13 +10,14 @@ import javax.imageio.ImageIO;
 
 public class SplitTarget {
 
+	public void split(String filePath,String targetImageFileFormat, int height, int width,
+			String tempFolderOfTargetSplitLocation) throws IOException {
 
-	public void split(String filePath,String targetImageFileFormat, int height, int width, String tempFolderOfTargetSplitLocation) throws IOException {
-		
-		int x = 0 ; // used in the loops
+		// used in the loops
+		int x = 0 ; 
 		int y = 0 ;
 		int i = 0 ;
-		
+
 		/*Load target image into memory*/
 		File file = new File(filePath);
 		//FileInputStream fis = new FileInputStream(file);
@@ -25,7 +26,6 @@ public class SplitTarget {
 		/* calculate target image dimensions*/
 		int targetImageHeight = image.getHeight();
 		int targetImageWidth = image.getWidth();
-
 
 		/*calculate total number of cells, and calculate dimensions of each cell*/
 		int rows = (targetImageHeight/height); 
@@ -37,7 +37,6 @@ public class SplitTarget {
 
 		/*Define an Image array to hold totalCells in the image*/
 		int count = 0;
-
 		BufferedImage bi[] = new BufferedImage[totalCells];
 
 		/*fill image array with the split image*/
@@ -45,13 +44,16 @@ public class SplitTarget {
 			for (y = 0; y < cols; y++) {
 				//Initialize the image array with image totalCells
 				if(image.getType() == 0) {
+					/* Some image types like Tiff return 0 with getTpye().
+					 * Hence, if the getType() returns 0, we set it to a random Integer.*/
 					bi[count] = new BufferedImage(cellWidth, cellHeight, 5);
 				} else {
 					bi[count] = new BufferedImage(cellWidth, cellHeight, image.getType());
 				}
 				// draw each cell of the image
 				Graphics2D gr = bi[count++].createGraphics();
-				gr.drawImage(image, 0, 0, cellWidth, cellHeight, cellWidth * y, cellHeight * x, cellWidth * y + cellWidth, cellHeight * x + cellHeight, null);
+				gr.drawImage(image, 0, 0, cellWidth, cellHeight, cellWidth * y, cellHeight * x,
+						cellWidth * y + cellWidth, cellHeight * x + cellHeight, null);
 				gr.dispose();
 			}
 		}
@@ -61,14 +63,14 @@ public class SplitTarget {
 
 		for (i = 0; i < bi.length; i++) {
 			//split target image, and store it in a temp folder
-			ImageIO.write(bi[i], targetImageFileFormat, new File(tempFolderOfTargetSplitLocation + form.format(i) + "." + targetImageFileFormat));
-			
+			ImageIO.write(bi[i], targetImageFileFormat, new File(tempFolderOfTargetSplitLocation + 
+					form.format(i) + "." + targetImageFileFormat));
 		}
-
 	}
 
-	protected void  renderOutputImage(String filePath, int tileHeight, int tileWidth, ArrayList<String> outputList, String outputFileLocation, String outputFileFormat) throws IOException {
-		
+	protected void  renderOutputImage(String filePath, int tileHeight, int tileWidth, ArrayList<String> outputList,
+			String outputFileLocation, String outputFileFormat) throws IOException {
+
 		int num = 0;  
 		int i = 0; 
 		int j = 0;
@@ -80,7 +82,6 @@ public class SplitTarget {
 		// target image dimensions
 		int targetImageHeight = targetImage.getHeight();
 		int targetImageWidth = targetImage.getWidth();
-
 
 		/*calculate total number of cells, and calculate dimensions of each cell*/
 		int rows = (targetImageHeight/tileHeight); 
@@ -105,9 +106,8 @@ public class SplitTarget {
 			}  
 		}  
 		int type = buffImages[0].getType();
-		
+
 		BufferedImage finalImg = new BufferedImage(cellWidth*cols, cellHeight*rows, type);
-		
 
 		//renders the output image.
 		for (i = 0; i < rows; i++) {  
@@ -123,6 +123,4 @@ public class SplitTarget {
 			e.printStackTrace();
 		} 
 	}   
-
-
 }

@@ -19,7 +19,7 @@ public class ImageInfo {
 			tileWidth = tile.getWidth();
 			tileHeight = tile.getHeight();
 			tileSize = tileHeight * tileWidth;
-			
+
 			//Find RGB for each pixel of the image and return the average RGB for the image
 			for (int i = 0; i<tileWidth; i++){
 				for(int j = 0 ; j<tileHeight; j++){
@@ -27,10 +27,10 @@ public class ImageInfo {
 					red += c.getRed();
 					green += c.getGreen();
 					blue += c.getBlue();
-					}
 				}
-			}catch(Exception e) {
-				System.out.println("Image not present in directory" + e);
+			}
+		}catch(Exception e) {
+			System.out.println("Error in reading input image file" + e);
 		}
 	}
 
@@ -38,7 +38,7 @@ public class ImageInfo {
 	public void setFilePath(String filePathOfImage){
 		filePath = filePathOfImage;
 	}
-	
+
 	public String getFilePath() {		
 		return filePath;
 	}
@@ -54,7 +54,7 @@ public class ImageInfo {
 	public int getTotalBlue() {
 		return blue/tileSize;
 	}
-	
+
 	public int getTileHeight(){
 		return tileHeight;
 	}
