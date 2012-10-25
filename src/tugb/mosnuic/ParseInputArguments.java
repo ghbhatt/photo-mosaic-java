@@ -196,6 +196,8 @@ public class ParseInputArguments {
 			default:
 				result = false;
 				System.out.println(ERROR);
+				System.out.println("Invalid inputs provided.");
+				System.exit(0);
 			}
 		}
 		return result;
