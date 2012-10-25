@@ -10,7 +10,7 @@ public class ImageInfo {
 
 	protected String filePath;
 	protected int red, green , blue;
-	int tileWidth, tileHeight,tileSize;
+	int tileWidth, tileHeight,imageSize;
 
 	public void calculateRGB() throws IOException {
 		/*Calculate RGB for an image */
@@ -18,7 +18,7 @@ public class ImageInfo {
 			BufferedImage tile = ImageIO.read(new File(filePath));
 			tileWidth = tile.getWidth();
 			tileHeight = tile.getHeight();
-			tileSize = tileHeight * tileWidth;
+			imageSize = tileHeight * tileWidth;
 
 			//Find RGB for each pixel of the image and return the average RGB for the image
 			for (int i = 0; i<tileWidth; i++){
@@ -38,21 +38,22 @@ public class ImageInfo {
 	public void setFilePath(String filePathOfImage){
 		filePath = filePathOfImage;
 	}
+	
 
 	public String getFilePath() {		
 		return filePath;
 	}
 
 	public int getTotalRed() {
-		return red/tileSize;
+		return red/imageSize;
 	}
 
 	public int getTotalGreen() {
-		return green/tileSize;
+		return green/imageSize;
 	}
 
 	public int getTotalBlue() {
-		return blue/tileSize;
+		return blue/imageSize;
 	}
 
 	public int getTileHeight(){
@@ -61,5 +62,10 @@ public class ImageInfo {
 
 	public int getTileWidth(){
 		return tileWidth;
+	}
+	
+	public int getImageSize(){
+		return imageSize;
+		
 	}
 }

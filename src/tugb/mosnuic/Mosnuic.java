@@ -1,11 +1,14 @@
 package tugb.mosnuic;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 public class Mosnuic {
 
@@ -58,25 +61,37 @@ public class Mosnuic {
 				/* Print statements used for debugging. */
 				//System.out.println("folder deleted and created again.");
 			}
-
-			// Process target image 
-			SplitTarget st = new SplitTarget();
-			st.split(targetImage,targetImageFileFormat,tiles.get(0).getTileHeight(), tiles.get(0).getTileWidth(),
-					tempFolderOfTargetSplitLocation );
-			ArrayList<ImageInfo> cells = new ArrayList<ImageInfo>();
-
-			/* Creates ImageInfo object for each cell to calculate RGB */ 
-			/* (When target image is split in the tile dimensions, each piece is called cell.) */
-			for (final File fileEntry : tempFolderOfTargetSplit.listFiles()) {
-				ImageInfo temp = new ImageInfo();
-				temp.setFilePath(fileEntry.getPath());
-				temp.calculateRGB();
-				cells.add(temp);
-			}
-			System.out.println("Target image processed.");
-
+			
+			/* Calculate the target image dimension to determine if there are
+			 * enough tiles to create the output image*/
+			BufferedImage ti = ImageIO.read(new File(targetImage));
+			
+			int targetImageSize  = ti.getHeight() * ti.getWidth();
+			int tileSize = tiles.get(0).getImageSize();
+			int totalCells = targetImageSize/tileSize;
+			/*System.out.println(targetImageSize);
+			System.out.println(tileSize);
+			System.out.println("total no of cells:"+totalCells);*/
+			
 			//Check if there are enough tiles to create the output image.
-			if((tiles.size()* repetition) >= cells.size()){
+			if((tiles.size()* repetition) >= totalCells){
+				
+				// Process target image 
+				SplitTarget st = new SplitTarget();
+				st.split(targetImage,targetImageFileFormat,tiles.get(0).getTileHeight(), tiles.get(0).getTileWidth(),
+						tempFolderOfTargetSplitLocation );
+				
+				/* Creates ImageInfo object for each cell to calculate RGB */ 
+				/* (When target image is split in the tile dimensions, each piece is called cell.) */
+				ArrayList<ImageInfo> cells = new ArrayList<ImageInfo>();
+				
+				for (final File fileEntry : tempFolderOfTargetSplit.listFiles()) {
+					ImageInfo temp = new ImageInfo();
+					temp.setFilePath(fileEntry.getPath());
+					temp.calculateRGB();
+					cells.add(temp);
+				}
+				System.out.println("Target image processed.");
 
 				//outputList is the list to store matching tiles.
 				ArrayList<String> outputList = new ArrayList<String>();
@@ -119,10 +134,10 @@ public class Mosnuic {
 				SplitTarget oi = new SplitTarget();
 				oi.renderOutputImage(targetImage, tiles.get(0).getTileHeight(), tiles.get(0).getTileWidth(),
 						outputList, outputFileLocation, outputFileFormat);
-				//deleteDirectory(tempFolderOfTargetSplit);
-				//long endTime   = System.currentTimeMillis();
-				//long totalTime = endTime - startTime;
-				//System.out.println(totalTime);
+				deleteDirectory(tempFolderOfTargetSplit);
+				/*long endTime   = System.currentTimeMillis();
+				long totalTime = endTime - startTime;
+				System.out.println(totalTime);*/
 			}
 			else {
 				System.out.println("Not enough tiles in the library to create an output image.");
