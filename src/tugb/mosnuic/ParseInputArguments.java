@@ -45,12 +45,12 @@ public class ParseInputArguments {
 		/*Construct O/P filename if -o is absent */
 		if(OutputImagePathFound==0){
 			outputImageFilePath = new String(targetImageFilePath.substring(0, targetImageFilePath.lastIndexOf('.')) + 
-					OUTPUT_SUFFIX + targetImageFileFormat);
+					OUTPUT_SUFFIX + "."+targetImageFileFormat);
 		}
 		if(OutputImagePathFound==1){
 			if(outputImageFilePath.lastIndexOf('.') == -1)
 				outputImageFilePath = new String(targetImageFilePath.substring(0, targetImageFilePath.lastIndexOf(File.separatorChar)) +File.separatorChar +
-						outputImageFilePath + outputImageFileFormat);
+						outputImageFilePath + "."+outputImageFileFormat);
 			else{
 				outputImageFilePath = new String(targetImageFilePath.substring(0, targetImageFilePath.lastIndexOf(File.separatorChar)) +File.separatorChar + 
 						outputImageFilePath);
@@ -170,7 +170,7 @@ public class ParseInputArguments {
 					else
 						targetImageFilePath = args[i];
 						int posTarget = args[i].lastIndexOf('.');
-					targetImageFileFormat = args[i].substring(posTarget+1);
+						targetImageFileFormat = args[i].substring(posTarget+1);
 				}
 				else
 				{
@@ -232,6 +232,7 @@ public class ParseInputArguments {
 		} catch (NumberFormatException e) {
 			System.out.println(ERROR);
 			System.out.println("Integer n4 in [-r n4] not parseable");
+			System.exit(0);
 			return false;
 		}
 	}
@@ -256,6 +257,12 @@ public class ParseInputArguments {
 					return true;
 				}
 			}
+		}
+		else if(args3.lastIndexOf('.')==-1){
+			OutputImagePathFound = 1;
+			outputImageFilePath = args3;
+			return true;
+			
 		}
 		return false;
 
