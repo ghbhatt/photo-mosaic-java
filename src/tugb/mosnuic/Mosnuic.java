@@ -123,11 +123,11 @@ public class Mosnuic {
 		System.out.println(totalTime);
 		}
 		else {
-			System.out.println("Invalid inputs.");
+			System.out.println("Not enough tiles.");
 			System.exit(0);
 		}
 		}else {
-			System.out.println("Not enough tiles.");
+			System.out.println("Invalid Input");
 			System.exit(0);
 		}
 
