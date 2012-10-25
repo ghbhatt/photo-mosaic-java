@@ -18,7 +18,6 @@ public class Mosnuic {
 		boolean check = parser.ParsePath(args);
 		
 		if(check){
-		System.out.print("i am running");
 		/* initializing variables and objects.*/
 		long startTime = System.currentTimeMillis();
 		ArrayList<ImageInfo> tiles = new ArrayList<ImageInfo>();
