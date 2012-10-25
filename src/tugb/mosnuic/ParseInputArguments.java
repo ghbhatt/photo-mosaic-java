@@ -240,22 +240,25 @@ public class ParseInputArguments {
 	public static boolean checkFlag_O(String args3){
 		String targetPath = new String(args3);
 		int lastIndexSlash = targetPath.lastIndexOf(File.separatorChar);
-		if(lastIndexSlash==-1){
-			OutputImagePathFound = 1;
-			outputImageFilePath = args3;
-			return true;
-		}
-		else{
-			File cliarg3 = new File(args3); 
-			String FinalImageParent = cliarg3.getParent();
-			File cliFinalImageParent = new File(FinalImageParent);
-			if(cliFinalImageParent.exists()){
-				OutputImagePathFound = 2;
+		if(checkFileTypes(args3)){
+			if(lastIndexSlash==-1){
+				OutputImagePathFound = 1;
 				outputImageFilePath = args3;
 				return true;
 			}
-			return false;
+			else{
+				File cliarg3 = new File(args3); 
+				String FinalImageParent = cliarg3.getParent();
+				File cliFinalImageParent = new File(FinalImageParent);
+				if(cliFinalImageParent.exists()){
+					OutputImagePathFound = 2;
+					outputImageFilePath = args3;
+					return true;
+				}
+			}
 		}
+		return false;
+
 	}
 
 	/*Determines input type which is either a FLAG, FILE, DIR. If neither then default is ERROR*/
