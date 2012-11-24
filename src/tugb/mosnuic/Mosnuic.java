@@ -18,13 +18,13 @@ public class Mosnuic {
 
 		ParseInputArguments parser = new ParseInputArguments();
 		boolean check = parser.ParsePath(args);
-		parser.getMaxNumberOfTiles();
+		/*parser.getMaxNumberOfTiles();
 		parser.getOutputImageFileFormat();
 		parser.getOutputImageFilePath();
 		parser.getTargetImageFileFormat();
 		parser.getTargetImageFilePath();
 		parser.getTileDirectory();
-		System.exit(0);
+		System.exit(0);*/
 
 		if(check){
 			/* initializing variables and objects.*/
@@ -159,10 +159,14 @@ public class Mosnuic {
 	/*Euclidean distance calculation */
 	public static double compareImages(ImageInfo cell,ImageInfo tile) {
 		double diff = 5000;
-		double deltaRed = (cell.red - tile.red);
+		/*double deltaRed = (cell.red - tile.red);
 		double deltaBlue = (cell.blue - tile.blue);
 		double deltaGreen = (cell.green - tile.green);
-		diff = ((deltaRed*deltaRed)+(deltaBlue*deltaBlue)+(deltaGreen*deltaGreen));
+		diff = ((deltaRed*deltaRed)+(deltaBlue*deltaBlue)+(deltaGreen*deltaGreen));*/
+		double deltaCieL = (cell.cieL - tile.cieL);
+		double deltaCieA = (cell.cieA - tile.cieA);
+		double deltaCieB = (cell.cieB - tile.cieB);
+		diff = ((deltaCieL*deltaCieL)+(deltaCieA*deltaCieA)+(deltaCieB*deltaCieB));
 		return diff;
 	}
 
