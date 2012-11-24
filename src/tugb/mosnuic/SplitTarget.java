@@ -120,7 +120,8 @@ public class SplitTarget {
 		try {
 			ImageIO.write(finalImg,outputFileFormat, new File(outputFileLocation));
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.out.println("Cannot write to the specified location");
 		} 
 	}   
 }
