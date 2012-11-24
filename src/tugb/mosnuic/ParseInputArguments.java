@@ -38,6 +38,14 @@ public class ParseInputArguments {
 
 		/* Method to construct the file path for the output image */
 		constructOutputImagePath();
+		
+		/*Check if output file has same name as input file. In that case throw an error*/
+		if(outputImageFilePath.equals(targetImageFilePath)){
+			System.out.println(ERROR);
+			System.out.println("Output file has same name and extension as target image file. Please change output file name");
+			System.exit(0);		
+			
+		}
 
 		return finalCheck;
 	}
@@ -311,34 +319,34 @@ public class ParseInputArguments {
 	/*Getter functions for all private members*/
 	public String getTargetImageFilePath()
 	{
-		//System.out.println("TargetImageFilePath\t "+targetImageFilePath);
+		System.out.println("TargetImageFilePath\t "+targetImageFilePath);
 		return targetImageFilePath;
 	}
 
 	public String getTileDirectory()
 	{
-		//System.out.println("TileDirectory\t"+tileDirectory);
+		System.out.println("TileDirectory\t"+tileDirectory);
 		return tileDirectory;
 	}
 
 	public int getMaxNumberOfTiles()
 	{
-		//System.out.println("MaxNumberOfTilesRepeated\t"+maxNumberOfTiles);
+		System.out.println("MaxNumberOfTilesRepeated\t"+maxNumberOfTiles);
 		return maxNumberOfTiles;
 	}
 
 	public String getTargetImageFileFormat(){
-		//System.out.println("TargetImageFileFormat\t"+targetImageFileFormat);
+		System.out.println("TargetImageFileFormat\t"+targetImageFileFormat);
 		return targetImageFileFormat;
 	}
 
 	public String getOutputImageFileFormat(){
-		//System.out.println("OutputImageFileFormat\t"+outputImageFileFormat);
+		System.out.println("OutputImageFileFormat\t"+outputImageFileFormat);
 		return outputImageFileFormat;
 	}
 
 	public String getOutputImageFilePath(){
-		//System.out.println("OutputImageFilePath\t"+outputImageFilePath);
+		System.out.println("OutputImageFilePath\t"+outputImageFilePath);
 		return outputImageFilePath;
 	}	
 }
