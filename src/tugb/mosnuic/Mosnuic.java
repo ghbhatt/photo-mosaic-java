@@ -18,14 +18,7 @@ public class Mosnuic {
 
 		ParseInputArguments parser = new ParseInputArguments();
 		boolean check = parser.ParsePath(args);
-		/*parser.getMaxNumberOfTiles();
-		parser.getOutputImageFileFormat();
-		parser.getOutputImageFilePath();
-		parser.getTargetImageFileFormat();
-		parser.getTargetImageFilePath();
-		parser.getTileDirectory();
-		System.exit(0);*/
-
+		
 		if(check){
 			/* initializing variables and objects.*/
 			long startTime = System.currentTimeMillis();
