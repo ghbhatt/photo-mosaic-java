@@ -28,7 +28,7 @@ public class Mosnuic {
 
 		if(check){
 			/* initializing variables and objects.*/
-			//long startTime = System.currentTimeMillis();
+			long startTime = System.currentTimeMillis();
 			ArrayList<ImageInfo> tiles = new ArrayList<ImageInfo>();
 			String targetImage  = parser.getTargetImageFilePath();
 			String targetImageFileFormat = parser.getTargetImageFileFormat();
@@ -142,9 +142,9 @@ public class Mosnuic {
 				oi.renderOutputImage(targetImage, tiles.get(0).getTileHeight(), tiles.get(0).getTileWidth(),
 						outputList, outputFileLocation, outputFileFormat);
 				deleteDirectory(tempFolderOfTargetSplit);
-				/*long endTime   = System.currentTimeMillis();
+				long endTime   = System.currentTimeMillis();
 				long totalTime = endTime - startTime;
-				System.out.println(totalTime);*/
+				System.out.println(totalTime);
 			}
 			else {
 				System.out.println("Not enough tiles in the library to create an output image.");
