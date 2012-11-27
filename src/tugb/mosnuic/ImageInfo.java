@@ -35,7 +35,7 @@ public class ImageInfo {
 			//rgbtoYUV(red, green, blue);
 			
 		}catch(Exception e) {
-			System.out.println("Error in reading input image file" + e);
+			System.out.println("Error in reading input image file");
 		}
 	}
 	
