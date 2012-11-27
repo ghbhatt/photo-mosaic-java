@@ -102,7 +102,7 @@ public class SplitTarget {
 			try {
 				buffImages[i] = ImageIO.read(imgFiles[i]);
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.out.println("cannot create output image.");
 			}  
 		}  
 		int type = buffImages[0].getType();
@@ -116,11 +116,13 @@ public class SplitTarget {
 				num++;  
 			}  
 		}  
-		System.out.println("Final Image created.");  
+		
 		try {
 			ImageIO.write(finalImg,outputFileFormat, new File(outputFileLocation));
+			System.out.println("Final Image created.");  
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.out.println("Cannot write to the specified location");
 		} 
 	}   
 }
