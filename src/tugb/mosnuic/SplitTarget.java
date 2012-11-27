@@ -68,7 +68,7 @@ public class SplitTarget {
 		}
 	}
 
-	protected void  renderOutputImage(String filePath, int tileHeight, int tileWidth, ArrayList<String> outputList,
+	protected void  renderOutputImage(String filePath, int tileHeight, int tileWidth, String[] outputList,
 			String outputFileLocation, String outputFileFormat) throws IOException {
 
 		int num = 0;  
@@ -94,7 +94,7 @@ public class SplitTarget {
 		// file array to read images from outputlist.
 		File[] imgFiles = new File[totalCells];  
 		for (i = 0; i < totalCells; i++) {  
-			imgFiles[i] = new File(outputList.get(i));  
+			imgFiles[i] = new File(outputList[i]);  
 		} 
 		// array to read images
 		BufferedImage[] buffImages = new BufferedImage[totalCells];  

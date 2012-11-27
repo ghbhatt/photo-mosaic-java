@@ -12,6 +12,7 @@ public class ImageInfo {
 	protected int red, green , blue;
 	int tileWidth, tileHeight,imageSize;
 	protected int cieL, cieA, cieB;
+	protected int yuvY, yuvU, yuvV;
 
 	public void calculateRGB() throws IOException {
 		/*Calculate RGB for an image */
@@ -31,13 +32,22 @@ public class ImageInfo {
 				}
 			}
 			rgbToLab(red, green, blue);
+			//rgbtoYUV(red, green, blue);
 			
 		}catch(Exception e) {
 			System.out.println("Error in reading input image file" + e);
 		}
 	}
-
 	
+
+	private void rgbtoYUV(int r, int g, int b) {
+		// TODO Auto-generated method stub
+		yuvY = (int)(0.299 * r + 0.587 * g + 0.114 * b);
+		yuvU = (int)((b - yuvY) * 0.492f); 
+		yuvV = (int)((r - yuvY) * 0.877f);
+		
+	}
+
 	private void rgbToLab(int R, int G, int B) {
 		float r, g, b, X, Y, Z, fx, fy, fz, xr, yr, zr;
 		float Ls, as, bs;
