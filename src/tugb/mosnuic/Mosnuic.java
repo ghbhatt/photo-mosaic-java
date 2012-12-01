@@ -96,42 +96,6 @@ public class Mosnuic {
 				}
 				System.out.println("Target image processed.");
 
-				
-
-				/* For every cell in the cells ArrayList, calculate Euclidean distance with each tile.
-				 * Store this distance and the tile location in a Map rgbDiff. Select the minimum distance
-				 * and store the path of the corresponding tile in outputList. 
-				for(i=0;i<cells.size(); i++) {
-					Map <Double,String> rgbDiff = new HashMap<Double,String>();
-					for(j=0;j<tiles.size(); j++) {
-						diff = compareImages(cells.get(i),tiles.get(j));
-						rgbDiff.put(diff, tiles.get(j).filePath);
-					}
-					double min = Collections.min(rgbDiff.keySet());
-					//Add the tile with minimum distance to the outputList in the very first iteration for a cell.
-					if(i==0){
-						outputList.add(rgbDiff.get(min));
-					}
-					//Add until tiles are allowed to repeat.
-					else if(i!=0 && countOccurences(rgbDiff.get(min)) < repetition){
-						outputList.add(rgbDiff.get(min));
-					}
-					//If tiles repetition exceeds the maximum number of times allowed:
-					else{
-						//remove the tile which exceeded the limit from the tile list 
-						for (int k=0;k<tiles.size();k++) {
-							if(tiles.get(k).getFilePath()==rgbDiff.get(min)){
-								tiles.remove(k);		
-							}
-						}
-						//remove the tile which exceeded the limit from rgbDiff
-						rgbDiff.remove(min); 
-						//Find the next tile with minimum value from rgbDiff
-						double min_updated = Collections.min(rgbDiff.keySet());
-						//Add the new minimum to the outputList
-						outputList.add(rgbDiff.get(min_updated));
-					}
-				}*/
 				outputList = new String[cells.size()];
 				createOutputList(cells, tiles, repetition);
 				System.out.println("O/P LIST=================");
@@ -160,7 +124,7 @@ public class Mosnuic {
 			ArrayList<ImageInfo> tiles, int repetition) {
 		int mid;
 		int mrow, mcol, cols, lpos, rpos;
-		
+		int i, j, k, div;
 		int targetImageHeight = ti.getHeight();
 		int targetImageWidth = ti.getWidth();
 
@@ -168,70 +132,39 @@ public class Mosnuic {
 		cols = (targetImageWidth/tiles.get(0).getTileWidth());
 		mrow = (targetImageHeight/tiles.get(0).getTileHeight())/2;
 		mcol = cols/2; 
-		
 		mid=(mrow*cols)+mcol;
+		
+		div = (targetImageHeight/tiles.get(0).getTileHeight())/5;
+		
+		/*for(i=0;i<div;i++)
+			for(j=i;j<cells.size();j+=div){
+				calculateBestMatchElement(j, cols, cells, tiles, repetition);
+			}*/
+		System.out.println("Start to match");
+		
+		
+		for(i=0;i<div;i++){
+			for(j=(mid-1)-i, k=mid+i;;j-=div, k+=div){
+				if(j>=0)
+					calculateBestMatchElement(j, cols, cells, tiles, repetition);
+				if(k<cells.size())
+					calculateBestMatchElement(k, cols, cells, tiles, repetition);
+				if(j<0 && k>=cells.size())
+					break;
+			}
+		}
+			
+		
 		//mid=cells.size()/2;
 		System.out.println("Cells.size = "+cells.size()+mrow+"\t"+mcol+"\t"+cols);
 
-		
-		//COMMENTED FROM HERE
-				/*calculateBestMatch(mid, cells, tiles, repetition, mid);
-				
-				for(i=mid-1, j=mid+1;i>=0||j<cells.size();i--,j++){
-					if(i>=0)
-						calculateBestMatch(i, cells, tiles, repetition, mid);
-					if(j<cells.size())
-						calculateBestMatch(j, cells, tiles, repetition, mid);			
-				}
-
-			}
-
-			private static void calculateBestMatch(int pos, ArrayList<ImageInfo> cells,
-					ArrayList<ImageInfo> tiles, int repetition, int mid) {
-				// TODO Auto-generated method stub
-				Map <Double,String> rgbDiff = new HashMap<Double,String>();
-				double diff=0.0;
-				
-				for(int j=0;j<tiles.size(); j++) {
-					diff = compareImages(cells.get(pos),tiles.get(j));
-					rgbDiff.put(diff, tiles.get(j).filePath);
-				}
-				
-				double min = Collections.min(rgbDiff.keySet());
-				
-				//Add the tile with minimum distance to the outputList in the very first iteration for a cell.
-				if(pos==mid){
-					outputList[pos]=rgbDiff.get(min);
-					//System.out.println("pos\t"+outputList);
-				}
-				else if(pos!=mid && countOccurences(rgbDiff.get(min)) < repetition){
-					outputList[pos]=rgbDiff.get(min);
-					//System.out.println("pos\t"+outputList);
-				}
-				//If tiles repetition exceeds the maximum number of times allowed:
-				else{
-					//remove the tile which exceeded the limit from the tile list 
-					for (int k=0;k<tiles.size();k++) {
-						if(tiles.get(k).getFilePath()==rgbDiff.get(min)){
-							tiles.remove(k);		
-						}
-					}
-					//remove the tile which exceeded the limit from rgbDiff
-					rgbDiff.remove(min); 
-					//Find the next tile with minimum value from rgbDiff
-					double min_updated = Collections.min(rgbDiff.keySet());
-					//Add the new minimum to the outputList
-					outputList[pos]=rgbDiff.get(min_updated);
-					//System.out.println("pos\t"+outputList);
-				}*/
-		
-		for(int k=0;k<cells.size();k++){
+		/*for(int k=0;k<cells.size();k++){
 			if(k%cols==0)
 				System.out.print("\n");	
 			System.out.print(k+"\t");
 				
-		}
-		lpos = mid - cols;
+		}*/
+		/*lpos = mid - cols;
 		rpos = mid + cols;
 		System.out.println("lpos: "+lpos+"\trpos: "+rpos);
 		calculateBestMatchRow(mid, cols, cells, tiles, repetition);
@@ -250,10 +183,10 @@ public class Mosnuic {
 				rpos=rpos+cols;
 			}
 			
-		}
+		}*/
 	}
 
-	private static void calculateBestMatchRow(int mid, int cols, ArrayList<ImageInfo> cells,
+	/*private static void calculateBestMatchRow(int mid, int cols, ArrayList<ImageInfo> cells,
 			ArrayList<ImageInfo> tiles, int repetition) {
 		// TODO Auto-generated method stub
 		int i, j;
@@ -280,10 +213,10 @@ public class Mosnuic {
 			if(i<0 && j>=cells.size())
 				break;
 		}	
-	}
+	}*/
 
 	private static void calculateBestMatchElement(int pos, int cols, ArrayList<ImageInfo> cells,
-			ArrayList<ImageInfo> tiles, int repetition, int mid) {
+			ArrayList<ImageInfo> tiles, int repetition) {
 		// TODO Auto-generated method stub
 		Map <Double,String> rgbDiff = new HashMap<Double,String>();
 		double diff=0.0;
@@ -296,11 +229,11 @@ public class Mosnuic {
 		double min = Collections.min(rgbDiff.keySet());
 		
 		//Add the tile with minimum distance to the outputList in the very first iteration for a cell.
-		if(pos==mid){
+		if(pos==0){
 			outputList[pos]=rgbDiff.get(min);
 			System.out.println(pos+"\t"+outputList[pos]);
 		}
-		else if(pos!=mid && countOccurences(rgbDiff.get(min)) < repetition){
+		else if(pos!=0 && countOccurences(rgbDiff.get(min)) < repetition){
 			outputList[pos]=rgbDiff.get(min);
 			System.out.println(pos+"\t"+outputList[pos]);
 		}
