@@ -7,14 +7,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.imageio.ImageIO;
 
 public class Mosnuic {
 
 	static HashMap <String,Integer> imageCount = new HashMap<String,Integer>();
-	//outputList is the list to store matching tiles.
-	static String[] outputList = null;
+	//outputArray is the list to store matching tiles.
+	static String[] outputArray = null;
 	static BufferedImage ti = null;
 
 	public static void main(String[] args) throws IOException {
@@ -40,9 +39,7 @@ public class Mosnuic {
 			File tempFolderOfTargetSplit = new File(tempFolderOfTargetSplitLocation);
 
 			File filepathOfTileLibrary = new File(tileLibrary);
-			int i = 0;
-			int j = 0;
-
+			
 			/* For each tile, create ImageInfo object to calculate RGB and get its location */
 			for (final File fileEntry : filepathOfTileLibrary.listFiles()) {
 				ImageInfo temp = new ImageInfo();
@@ -72,16 +69,13 @@ public class Mosnuic {
 			int targetImageSize  = ti.getHeight() * ti.getWidth();
 			int tileSize = tiles.get(0).getImageSize();
 			int totalCells = targetImageSize/tileSize;
-			/*System.out.println(targetImageSize);
-			System.out.println(tileSize);
-			System.out.println("total no of cells:"+totalCells);*/
 			
 			//Check if there are enough tiles to create the output image.
 			if((tiles.size()* repetition) >= totalCells){
 				
 				// Process target image 
-				SplitTarget st = new SplitTarget();
-				st.split(targetImage,targetImageFileFormat,tiles.get(0).getTileHeight(), tiles.get(0).getTileWidth(),
+				ProcessImage st = new ProcessImage();
+				st.split(targetImage,targetImageFileFormat,tiles.get(0).getImageHeight(), tiles.get(0).getImageWidth(),
 						tempFolderOfTargetSplitLocation );
 				
 				/* Creates ImageInfo object for each cell to calculate RGB */ 
@@ -96,15 +90,12 @@ public class Mosnuic {
 				}
 				System.out.println("Target image processed.");
 
-				outputList = new String[cells.size()];
-				createOutputList(cells, tiles, repetition);
-				System.out.println("O/P LIST=================");
-				for(i=0;i<cells.size();i++)
-					System.out.println(i+"\t"+outputList[i]);
-				//WE ARE HERE
-				SplitTarget oi = new SplitTarget();
-				oi.renderOutputImage(targetImage, tiles.get(0).getTileHeight(), tiles.get(0).getTileWidth(),
-						outputList, outputFileLocation, outputFileFormat);
+				outputArray = new String[cells.size()];
+				createoutputArray(cells, tiles, repetition);			
+				
+				ProcessImage oi = new ProcessImage();
+				oi.renderOutputImage(targetImage, tiles.get(0).getImageHeight(), tiles.get(0).getImageWidth(),
+						outputArray, outputFileLocation, outputFileFormat);
 				deleteDirectory(tempFolderOfTargetSplit);
 				long endTime   = System.currentTimeMillis();
 				long totalTime = endTime - startTime;
@@ -120,28 +111,21 @@ public class Mosnuic {
 		}
 	}
 
-	private static void createOutputList(ArrayList<ImageInfo> cells,
+	private static void createoutputArray(ArrayList<ImageInfo> cells,
 			ArrayList<ImageInfo> tiles, int repetition) {
 		int mid;
-		int mrow, mcol, cols, lpos, rpos;
+		int mrow, mcol, cols;
 		int i, j, k, div;
 		int targetImageHeight = ti.getHeight();
 		int targetImageWidth = ti.getWidth();
 
 		/*calculate total number of cells, and calculate dimensions of each cell*/
-		cols = (targetImageWidth/tiles.get(0).getTileWidth());
-		mrow = (targetImageHeight/tiles.get(0).getTileHeight())/2;
+		cols = (targetImageWidth/tiles.get(0).getImageWidth());
+		mrow = (targetImageHeight/tiles.get(0).getImageHeight())/2;
 		mcol = cols/2; 
 		mid=(mrow*cols)+mcol;
 		
-		div = (targetImageHeight/tiles.get(0).getTileHeight())/5;
-		
-		/*for(i=0;i<div;i++)
-			for(j=i;j<cells.size();j+=div){
-				calculateBestMatchElement(j, cols, cells, tiles, repetition);
-			}*/
-		System.out.println("Start to match");
-		
+		div = (targetImageHeight/tiles.get(0).getImageHeight())/5;
 		
 		for(i=0;i<div;i++){
 			for(j=(mid-1)-i, k=mid+i;;j-=div, k+=div){
@@ -153,71 +137,11 @@ public class Mosnuic {
 					break;
 			}
 		}
-			
-		
-		//mid=cells.size()/2;
-		System.out.println("Cells.size = "+cells.size()+mrow+"\t"+mcol+"\t"+cols);
-
-		/*for(int k=0;k<cells.size();k++){
-			if(k%cols==0)
-				System.out.print("\n");	
-			System.out.print(k+"\t");
-				
-		}*/
-		/*lpos = mid - cols;
-		rpos = mid + cols;
-		System.out.println("lpos: "+lpos+"\trpos: "+rpos);
-		calculateBestMatchRow(mid, cols, cells, tiles, repetition);
-		//outputList[2142]=new String("/home/pait1988/prototype3/Tiles24x18/2005corn.jpg");
-		
-		
-		while(lpos>0 || (rpos<cells.size())){
-			if(lpos>0){
-				System.out.println("lpos: "+lpos+"\trpos: "+rpos);
-				calculateBestMatchRow(lpos, cols, cells, tiles, repetition);
-				lpos=lpos-cols;
-			}
-			if(rpos<cells.size()){
-				System.out.println("lpos: "+lpos+"\trpos: "+rpos);
-				calculateBestMatchRow(rpos, cols, cells, tiles, repetition);
-				rpos=rpos+cols;
-			}
-			
-		}*/
 	}
-
-	/*private static void calculateBestMatchRow(int mid, int cols, ArrayList<ImageInfo> cells,
-			ArrayList<ImageInfo> tiles, int repetition) {
-		// TODO Auto-generated method stub
-		int i, j;
-		calculateBestMatchElement(mid, cols, cells, tiles, repetition, mid);
-		for(i=mid-1, j=mid+1; (((i%cols)<(mid%cols))||((j%cols)>(mid%cols))) && 
-				(i>=0 && j<=cells.size());){
-			
-			//System.out.println("In loop\t"+i+"\t"+j);
-			if((i%cols)<(mid%cols) && i>=0){
-				System.out.println("i=\t"+i);
-				calculateBestMatchElement(i, cols, cells, tiles, repetition, mid);
-				if(i==2143)
-					System.out.println("=============================Decrementing i\t"+i);
-				i--;
-				System.out.println("=============================Decremented i\t"+i);
-			}
-
-			if((j%cols)>(mid%cols) && j<cells.size()){
-				System.out.println("j=\t"+j);
-				calculateBestMatchElement(j, cols, cells, tiles, repetition, mid);
-				j++;
-			}
-			
-			if(i<0 && j>=cells.size())
-				break;
-		}	
-	}*/
 
 	private static void calculateBestMatchElement(int pos, int cols, ArrayList<ImageInfo> cells,
 			ArrayList<ImageInfo> tiles, int repetition) {
-		// TODO Auto-generated method stub
+		
 		Map <Double,String> rgbDiff = new HashMap<Double,String>();
 		double diff=0.0;
 		
@@ -228,14 +152,14 @@ public class Mosnuic {
 		
 		double min = Collections.min(rgbDiff.keySet());
 		
-		//Add the tile with minimum distance to the outputList in the very first iteration for a cell.
+		//Add the tile with minimum distance to the outputArray in the very first iteration for a cell.
 		if(pos==0){
-			outputList[pos]=rgbDiff.get(min);
-			System.out.println(pos+"\t"+outputList[pos]);
+			outputArray[pos]=rgbDiff.get(min);
+			System.out.println(pos+"\t"+outputArray[pos]);
 		}
 		else if(pos!=0 && countOccurences(rgbDiff.get(min)) < repetition){
-			outputList[pos]=rgbDiff.get(min);
-			System.out.println(pos+"\t"+outputList[pos]);
+			outputArray[pos]=rgbDiff.get(min);
+			System.out.println(pos+"\t"+outputArray[pos]);
 		}
 		//If tiles repetition exceeds the maximum number of times allowed:
 		else{
@@ -249,9 +173,9 @@ public class Mosnuic {
 			rgbDiff.remove(min); 
 			//Find the next tile with minimum value from rgbDiff
 			double min_updated = Collections.min(rgbDiff.keySet());
-			//Add the new minimum to the outputList
-			outputList[pos]=rgbDiff.get(min_updated);
-			System.out.println(pos+"\t"+outputList[pos]);
+			//Add the new minimum to the outputArray
+			outputArray[pos]=rgbDiff.get(min_updated);
+			System.out.println(pos+"\t"+outputArray[pos]);
 		}	
 	}
 
@@ -259,22 +183,22 @@ public class Mosnuic {
 	public static double compareImages(ImageInfo cell,ImageInfo tile) {
 		double diff = 5000;
 		
-		/*double deltaRed = (cell.red - tile.red);
+		/*RGB Color Model
+		double deltaRed = (cell.red - tile.red);
 		double deltaBlue = (cell.blue - tile.blue);
 		double deltaGreen = (cell.green - tile.green);
 		diff = ((deltaRed*deltaRed)+(deltaBlue*deltaBlue)+(deltaGreen*deltaGreen));*/
+		
 		double deltaCieL = (cell.cieL - tile.cieL);
 		double deltaCieA = (cell.cieA - tile.cieA);
 		double deltaCieB = (cell.cieB - tile.cieB);
 		
-		/*double deltaYuvY = (cell.yuvY - tile.yuvY);
+		/*YUV Color Model
+		double deltaYuvY = (cell.yuvY - tile.yuvY);
 		double deltaYuvU = (cell.yuvU - tile.yuvU);
 		double deltaYuvV = (cell.yuvV - tile.yuvV);*/
 		
-		diff = ((deltaCieL*deltaCieL)+(deltaCieA*deltaCieA)+(deltaCieB*deltaCieB));
-		
-		//diff = Math.sqrt((deltaYuvY*deltaYuvY) + (deltaYuvU*deltaYuvU) + (deltaYuvV*deltaYuvV));
-	
+		diff = ((deltaCieL*deltaCieL)+(deltaCieA*deltaCieA)+(deltaCieB*deltaCieB));	
 		return diff;
 	}
 

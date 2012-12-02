@@ -3,12 +3,12 @@ package tugb.mosnuic;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
-public class SplitTarget {
+public class ProcessImage {
 
 	public void split(String filePath,String targetImageFileFormat, int height, int width,
 			String tempFolderOfTargetSplitLocation) throws IOException {
@@ -20,8 +20,8 @@ public class SplitTarget {
 
 		/*Load target image into memory*/
 		File file = new File(filePath);
-		//FileInputStream fis = new FileInputStream(file);
-		BufferedImage image = ImageIO.read(file);
+		FileInputStream fis = new FileInputStream(file);
+		BufferedImage image = ImageIO.read(fis);
 
 		/* calculate target image dimensions*/
 		int targetImageHeight = image.getHeight();
@@ -68,7 +68,7 @@ public class SplitTarget {
 		}
 	}
 
-	protected void  renderOutputImage(String filePath, int tileHeight, int tileWidth, String[] outputList,
+	protected void  renderOutputImage(String filePath, int tileHeight, int tileWidth, String[] outputArray,
 			String outputFileLocation, String outputFileFormat) throws IOException {
 
 		int num = 0;  
@@ -76,8 +76,8 @@ public class SplitTarget {
 		int j = 0;
 		/*Load target image into memory*/
 		File file = new File(filePath);
-		//FileInputStream fis = new FileInputStream(file);
-		BufferedImage targetImage = ImageIO.read(file);
+		FileInputStream fis = new FileInputStream(file);
+		BufferedImage targetImage = ImageIO.read(fis);
 
 		// target image dimensions
 		int targetImageHeight = targetImage.getHeight();
@@ -91,10 +91,10 @@ public class SplitTarget {
 		int cellWidth = targetImage.getWidth() / cols; 
 		int cellHeight = targetImage.getHeight() / rows;
 
-		// file array to read images from outputlist.
+		// file array to read images from outputArray.
 		File[] imgFiles = new File[totalCells];  
 		for (i = 0; i < totalCells; i++) {  
-			imgFiles[i] = new File(outputList[i]);  
+			imgFiles[i] = new File(outputArray[i]);  
 		} 
 		// array to read images
 		BufferedImage[] buffImages = new BufferedImage[totalCells];  

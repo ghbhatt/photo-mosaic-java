@@ -10,22 +10,22 @@ public class ImageInfo {
 
 	protected String filePath;
 	protected int red, green , blue;
-	int tileWidth, tileHeight,imageSize;
+	int imageWidth, imageHeight,imageSize;
 	protected int cieL, cieA, cieB;
 	protected int yuvY, yuvU, yuvV;
 
 	public void calculateRGB() throws IOException {
 		/*Calculate RGB for an image */
 		try{
-			BufferedImage tile = ImageIO.read(new File(filePath));
-			tileWidth = tile.getWidth();
-			tileHeight = tile.getHeight();
-			imageSize = tileHeight * tileWidth;
+			BufferedImage inputImage = ImageIO.read(new File(filePath));
+			imageWidth = inputImage.getWidth();
+			imageHeight = inputImage.getHeight();
+			imageSize = imageHeight * imageWidth;
 
 			//Find RGB for each pixel of the image and return the average RGB for the image
-			for (int i = 0; i<tileWidth; i++){
-				for(int j = 0 ; j<tileHeight; j++){
-					Color c= new Color(tile.getRGB(i, j));
+			for (int i = 0; i<imageWidth; i++){
+				for(int j = 0 ; j<imageHeight; j++){
+					Color c= new Color(inputImage.getRGB(i, j));
 					red += c.getRed();
 					green += c.getGreen();
 					blue += c.getBlue();
@@ -40,13 +40,12 @@ public class ImageInfo {
 	}
 	
 
-	private void rgbtoYUV(int r, int g, int b) {
+	/*private void rgbtoYUV(int r, int g, int b) {
 		// TODO Auto-generated method stub
 		yuvY = (int)(0.299 * r + 0.587 * g + 0.114 * b);
 		yuvU = (int)((b - yuvY) * 0.492f); 
-		yuvV = (int)((r - yuvY) * 0.877f);
-		
-	}
+		yuvV = (int)((r - yuvY) * 0.877f);		
+	}*/
 
 	private void rgbToLab(int R, int G, int B) {
 		float r, g, b, X, Y, Z, fx, fy, fz, xr, yr, zr;
@@ -136,12 +135,12 @@ public class ImageInfo {
 		return blue/imageSize;
 	}
 
-	public int getTileHeight(){
-		return tileHeight;
+	public int getImageHeight(){
+		return imageHeight;
 	}
 
-	public int getTileWidth(){
-		return tileWidth;
+	public int getImageWidth(){
+		return imageWidth;
 	}
 	
 	public int getImageSize(){
