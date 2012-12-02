@@ -155,11 +155,11 @@ public class Mosnuic {
 		//Add the tile with minimum distance to the outputArray in the very first iteration for a cell.
 		if(pos==0){
 			outputArray[pos]=rgbDiff.get(min);
-			System.out.println(pos+"\t"+outputArray[pos]);
+			//System.out.println(pos+"\t"+outputArray[pos]);
 		}
 		else if(pos!=0 && countOccurences(rgbDiff.get(min)) < repetition){
 			outputArray[pos]=rgbDiff.get(min);
-			System.out.println(pos+"\t"+outputArray[pos]);
+			//System.out.println(pos+"\t"+outputArray[pos]);
 		}
 		//If tiles repetition exceeds the maximum number of times allowed:
 		else{
@@ -175,7 +175,7 @@ public class Mosnuic {
 			double min_updated = Collections.min(rgbDiff.keySet());
 			//Add the new minimum to the outputArray
 			outputArray[pos]=rgbDiff.get(min_updated);
-			System.out.println(pos+"\t"+outputArray[pos]);
+			//System.out.println(pos+"\t"+outputArray[pos]);
 		}	
 	}
 
