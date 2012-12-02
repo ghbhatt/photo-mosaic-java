@@ -125,8 +125,8 @@ public class Mosnuic {
 		mcol = cols/2; 
 		mid=(mrow*cols)+mcol;
 		
-		div = (int) ((targetImageWidth/tiles.get(0).getImageWidth())/5);
-		
+		//div = ((targetImageHeight/tiles.get(0).getImageHeight())/5);
+		div =20;
 		for(i=0;i<div;i++){
 			for(j=(mid-1)-i, k=mid+i;;j-=div, k+=div){
 				if(j>=0)
