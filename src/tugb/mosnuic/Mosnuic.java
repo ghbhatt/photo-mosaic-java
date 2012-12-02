@@ -67,7 +67,7 @@ public class Mosnuic {
 			ti = ImageIO.read(new File(targetImage));
 			
 			int targetImageSize  = ti.getHeight() * ti.getWidth();
-			int tileSize = tiles.get(0).getImageSize();
+			int tileSize = (int) tiles.get(0).getImageSize();
 			int totalCells = targetImageSize/tileSize;
 			
 			//Check if there are enough tiles to create the output image.
@@ -120,12 +120,12 @@ public class Mosnuic {
 		int targetImageWidth = ti.getWidth();
 
 		/*calculate total number of cells, and calculate dimensions of each cell*/
-		cols = (targetImageWidth/tiles.get(0).getImageWidth());
-		mrow = (targetImageHeight/tiles.get(0).getImageHeight())/2;
+		cols = (int) (targetImageWidth/tiles.get(0).getImageWidth());
+		mrow = (int) ((targetImageHeight/tiles.get(0).getImageHeight())/2);
 		mcol = cols/2; 
 		mid=(mrow*cols)+mcol;
 		
-		div = (targetImageHeight/tiles.get(0).getImageHeight())/5;
+		div = (int) ((targetImageHeight/tiles.get(0).getImageHeight())/5);
 		
 		for(i=0;i<div;i++){
 			for(j=(mid-1)-i, k=mid+i;;j-=div, k+=div){

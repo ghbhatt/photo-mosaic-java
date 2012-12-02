@@ -9,10 +9,10 @@ import javax.imageio.ImageIO;
 public class ImageInfo {
 
 	protected String filePath;
-	protected int red, green , blue;
-	int imageWidth, imageHeight,imageSize;
-	protected int cieL, cieA, cieB;
-	protected int yuvY, yuvU, yuvV;
+	protected double red, green , blue;
+	int imageWidth, imageHeight,imageSize; 
+	protected double cieL, cieA, cieB;
+	protected double yuvY, yuvU, yuvV;
 
 	public void calculateRGB() throws IOException {
 		/*Calculate RGB for an image */
@@ -47,15 +47,16 @@ public class ImageInfo {
 		yuvV = (int)((r - yuvY) * 0.877f);		
 	}*/
 
-	private void rgbToLab(int R, int G, int B) {
-		float r, g, b, X, Y, Z, fx, fy, fz, xr, yr, zr;
-		float Ls, as, bs;
-		float eps = 216.f/24389.f;
-		float k = 24389.f/27.f;
+	private void rgbToLab(double R, double G, double B) {
+		double r;
+		double g, b, X, Y, Z, fx, fy, fz, xr, yr, zr;
+		double Ls, as, bs;
+		double eps = 216.f/24389.f;
+		double k = 24389.f/27.f;
 		   
-		float Xr = 0.964221f;  
-		float Yr = 1.0f;
-		float Zr = 0.825211f;
+		double Xr = 0.964221f;  
+		double Yr = 1.0f;
+		double Zr = 0.825211f;
 		
 		
 		r = R/255.f; 
@@ -66,17 +67,17 @@ public class ImageInfo {
 		if (r <= 0.04045)
 			r = r/12;
 		else
-			r = (float) Math.pow((r+0.055)/1.055,2.4);
+			r = (double) Math.pow((r+0.055)/1.055,2.4);
 		
 		if (g <= 0.04045)
 			g = g/12;
 		else
-			g = (float) Math.pow((g+0.055)/1.055,2.4);
+			g = (double) Math.pow((g+0.055)/1.055,2.4);
 		
 		if (b <= 0.04045)
 			b = b/12;
 		else
-			b = (float) Math.pow((b+0.055)/1.055,2.4);
+			b = (double) Math.pow((b+0.055)/1.055,2.4);
 		
 		
 		X =  0.436052025f*r     + 0.385081593f*g + 0.143087414f *b;
@@ -89,27 +90,27 @@ public class ImageInfo {
 		zr = Z/Zr;
 				
 		if ( xr > eps )
-			fx =  (float) Math.pow(xr, 1/3.);
+			fx =  (double) Math.pow(xr, 1/3.);
 		else
-			fx = (float) ((k * xr + 16.) / 116.);
+			fx = (double) ((k * xr + 16.) / 116.);
 		 
 		if ( yr > eps )
-			fy =  (float) Math.pow(yr, 1/3.);
+			fy =  (double) Math.pow(yr, 1/3.);
 		else
-		fy = (float) ((k * yr + 16.) / 116.);
+		fy = (double) ((k * yr + 16.) / 116.);
 		
 		if ( zr > eps )
-			fz =  (float) Math.pow(zr, 1/3.);
+			fz =  (double) Math.pow(zr, 1/3.);
 		else
-			fz = (float) ((k * zr + 16.) / 116);
+			fz = (double) ((k * zr + 16.) / 116);
 		
 		Ls = ( 116 * fy ) - 16;
 		as = 500*(fx-fy);
 		bs = 200*(fy-fz);
 		
-		cieL = (int) (2.55*Ls + .5);
-		cieA = (int) (as + .5); 
-		cieB = (int) (bs + .5);     
+		cieL = (double) (2.55*Ls + .5);
+		cieA = (double) (as + .5); 
+		cieB = (double) (bs + .5);     
 	
 	}
 
@@ -123,15 +124,15 @@ public class ImageInfo {
 		return filePath;
 	}
 
-	public int getTotalRed() {
+	public double getTotalRed() {
 		return red/imageSize;
 	}
 
-	public int getTotalGreen() {
+	public double getTotalGreen() {
 		return green/imageSize;
 	}
 
-	public int getTotalBlue() {
+	public double getTotalBlue() {
 		return blue/imageSize;
 	}
 
