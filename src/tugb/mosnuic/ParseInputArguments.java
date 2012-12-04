@@ -171,7 +171,7 @@ public class ParseInputArguments {
 					if(args[i].lastIndexOf(File.separatorChar) == -1){
 						File temp = new File(args[i]);
 						targetImageFilePath = new String(temp.getAbsolutePath());
-						System.out.println(targetImageFilePath);
+						//System.out.println(targetImageFilePath);
 					}
 					else
 						targetImageFilePath = args[i];
@@ -351,34 +351,34 @@ public class ParseInputArguments {
 	/*Getter functions for all private members*/
 	public String getTargetImageFilePath()
 	{
-		System.out.println("TargetImageFilePath\t "+targetImageFilePath);
+		//System.out.println("TargetImageFilePath\t "+targetImageFilePath);
 		return targetImageFilePath;
 	}
 
 	public String getTileDirectory()
 	{
-		System.out.println("TileDirectory\t"+tileDirectory);
+		//System.out.println("TileDirectory\t"+tileDirectory);
 		return tileDirectory;
 	}
 
 	public int getMaxNumberOfTiles()
 	{
-		System.out.println("MaxNumberOfTilesRepeated\t"+maxNumberOfTiles);
+		//System.out.println("MaxNumberOfTilesRepeated\t"+maxNumberOfTiles);
 		return maxNumberOfTiles;
 	}
 
 	public String getTargetImageFileFormat(){
-		System.out.println("TargetImageFileFormat\t"+targetImageFileFormat);
+		//System.out.println("TargetImageFileFormat\t"+targetImageFileFormat);
 		return targetImageFileFormat;
 	}
 
 	public String getOutputImageFileFormat(){
-		System.out.println("OutputImageFileFormat\t"+outputImageFileFormat);
+		//System.out.println("OutputImageFileFormat\t"+outputImageFileFormat);
 		return outputImageFileFormat;
 	}
 
 	public String getOutputImageFilePath(){
-		System.out.println("OutputImageFilePath\t"+outputImageFilePath);
+		//System.out.println("OutputImageFilePath\t"+outputImageFilePath);
 		return outputImageFilePath;
 	}	
 }

@@ -37,7 +37,8 @@ public class Mosnuic {
 			int repetition = parser.getMaxNumberOfTiles();
 			String tempFolderOfTargetSplitLocation = userPath+"/DemoDirectory/";
 			File tempFolderOfTargetSplit = new File(tempFolderOfTargetSplitLocation);
-
+			
+			long sTile = System.currentTimeMillis();;
 			File filepathOfTileLibrary = new File(tileLibrary);
 			
 			/* For each tile, create ImageInfo object to calculate RGB and get its location */
@@ -49,7 +50,10 @@ public class Mosnuic {
 			}
 
 			System.out.println("Tile Library processed.");
+			long eTile = System.currentTimeMillis();
+			System.out.println("Time for tile lib: " + (eTile - sTile));
 
+			long timeForDD = System.currentTimeMillis();
 			/* Create a temporary directory to store cells. */
 			boolean isDirectoryCreated = tempFolderOfTargetSplit.mkdir();
 			if (isDirectoryCreated) {
@@ -61,7 +65,11 @@ public class Mosnuic {
 				/* Print statements used for debugging. */
 				//System.out.println("folder deleted and created again.");
 			}
+			long timeForDD2 = System.currentTimeMillis();
+			System.out.println("Time for Demo Dir: " + (timeForDD2-timeForDD));
 			
+			
+			long sTI = System.currentTimeMillis();
 			/* Calculate the target image dimension to determine if there are
 			 * enough tiles to create the output image*/
 			ti = ImageIO.read(new File(targetImage));
@@ -89,17 +97,37 @@ public class Mosnuic {
 					cells.add(temp);
 				}
 				System.out.println("Target image processed.");
-
+				long eTI = System.currentTimeMillis();
+				System.out.println("Time for TI:" + (eTI - sTI));
+				
+				long sOut = System.currentTimeMillis();
 				outputArray = new String[cells.size()];
-				createoutputArray(cells, tiles, repetition);			
+				//Start
+				ArrayList<Integer> numList = new ArrayList<Integer>();
+				for (int k=0 ; k<cells.size(); k++){
+					numList.add(k);
+				
+				}
+				long startToShuffle = System.currentTimeMillis();
+				Collections.shuffle(numList);
+				long endToShuffle = System.currentTimeMillis();
+				long timeToShuffle = endToShuffle - startToShuffle;
+				System.out.println("Time to shuffle "+timeToShuffle);
+				for(int m=0; m<numList.size(); m++){
+					//System.out.println(numList.get(m));
+					calculateBestMatchElement(numList.get(m), cells, tiles, repetition);
+				}
+ 				//createoutputArray(cells, tiles, repetition);			
 				
 				ProcessImage oi = new ProcessImage();
 				oi.renderOutputImage(targetImage, tiles.get(0).getImageHeight(), tiles.get(0).getImageWidth(),
 						outputArray, outputFileLocation, outputFileFormat);
 				deleteDirectory(tempFolderOfTargetSplit);
+				long eOut = System.currentTimeMillis();;
+				System.out.println("Time for output: "+ (eOut - sOut));
 				long endTime   = System.currentTimeMillis();
 				long totalTime = endTime - startTime;
-				System.out.println(totalTime);
+				System.out.println("Total Time: " +totalTime);
 			}
 			else {
 				System.out.println("Not enough tiles in the library to create an output image.");
@@ -111,7 +139,7 @@ public class Mosnuic {
 		}
 	}
 
-	private static void createoutputArray(ArrayList<ImageInfo> cells,
+	/*private static void createoutputArray(ArrayList<ImageInfo> cells,
 			ArrayList<ImageInfo> tiles, int repetition) {
 		int mid;
 		int mrow, mcol, cols;
@@ -119,7 +147,7 @@ public class Mosnuic {
 		int targetImageHeight = ti.getHeight();
 		int targetImageWidth = ti.getWidth();
 
-		/*calculate total number of cells, and calculate dimensions of each cell*/
+		calculate total number of cells, and calculate dimensions of each cell
 		cols = (int) (targetImageWidth/tiles.get(0).getImageWidth());
 		mrow = (int) ((targetImageHeight/tiles.get(0).getImageHeight())/2);
 		mcol = cols/2; 
@@ -140,9 +168,9 @@ public class Mosnuic {
 					break;
 			}
 		}
-	}
+	}*/
 
-	private static void calculateBestMatchElement(int pos, int cols, ArrayList<ImageInfo> cells,
+	private static void calculateBestMatchElement(int pos, ArrayList<ImageInfo> cells,
 			ArrayList<ImageInfo> tiles, int repetition) {
 		
 		Map <Double,String> rgbDiff = new HashMap<Double,String>();
