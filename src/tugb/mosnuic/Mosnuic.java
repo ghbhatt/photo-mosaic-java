@@ -11,13 +11,14 @@ import javax.imageio.ImageIO;
 
 public class Mosnuic {
 
+	//Keeps track of tile repetitions.
 	static HashMap <String,Integer> imageCount = new HashMap<String,Integer>();
-	//outputArray is the list to store matching tiles.
+	//outputArray is an array to store matching tiles.
 	static String[] outputArray = null;
 	static BufferedImage ti = null;
 
 	public static void main(String[] args) throws IOException {
-
+		
 		ParseInputArguments parser = new ParseInputArguments();
 		boolean check = parser.ParsePath(args);
 		
@@ -35,13 +36,16 @@ public class Mosnuic {
 			String userPath = System.getProperty("user.dir"); 
 
 			int repetition = parser.getMaxNumberOfTiles();
-			String tempFolderOfTargetSplitLocation = userPath+"/DemoDirectory/";
-			File tempFolderOfTargetSplit = new File(tempFolderOfTargetSplitLocation);
+			String tempFolderOfTargetSplitLocation = 
+					userPath+"/DemoDirectory/";
+			File tempFolderOfTargetSplit = 
+					new File(tempFolderOfTargetSplitLocation);
 			
 			long sTile = System.currentTimeMillis();;
 			File filepathOfTileLibrary = new File(tileLibrary);
 			
-			/* For each tile, create ImageInfo object to calculate RGB and get its location */
+			/* For each tile, create ImageInfo object to calculate RGB and get
+			 * its location */
 			for (final File fileEntry : filepathOfTileLibrary.listFiles()) {
 				ImageInfo temp = new ImageInfo();
 				temp.setFilePath(fileEntry.getPath());
@@ -56,41 +60,39 @@ public class Mosnuic {
 			long timeForDD = System.currentTimeMillis();
 			/* Create a temporary directory to store cells. */
 			boolean isDirectoryCreated = tempFolderOfTargetSplit.mkdir();
-			if (isDirectoryCreated) {
-				/* Print statements used for debugging. */
-				//System.out.println("Target image split and stored in a Temp folder.");
-			} else {
+			if (!isDirectoryCreated) {			
 				deleteDirectory(tempFolderOfTargetSplit);
 				tempFolderOfTargetSplit.mkdir();
-				/* Print statements used for debugging. */
-				//System.out.println("folder deleted and created again.");
 			}
 			long timeForDD2 = System.currentTimeMillis();
 			System.out.println("Time for Demo Dir: " + (timeForDD2-timeForDD));
 			
 			
 			long sTI = System.currentTimeMillis();
-			/* Calculate the target image dimension to determine if there are
-			 * enough tiles to create the output image*/
+			/* Load target image and calculate its dimensions to determine if 
+			 * there are enough tiles to create the output image*/
 			ti = ImageIO.read(new File(targetImage));
 			
 			int targetImageSize  = ti.getHeight() * ti.getWidth();
 			int tileSize = (int) tiles.get(0).getImageSize();
 			int totalCells = targetImageSize/tileSize;
 			
-			//Check if there are enough tiles to create the output image.
 			if((tiles.size()* repetition) >= totalCells){
+				/* (When target image is split in the tile dimensions,
+				 * each piece is called cell.) */
 				
-				// Process target image 
+				// Process target image to create cells.
 				ProcessImage st = new ProcessImage();
-				st.split(targetImage,targetImageFileFormat,tiles.get(0).getImageHeight(), tiles.get(0).getImageWidth(),
+				st.split(targetImage,targetImageFileFormat,
+						tiles.get(0).getImageHeight(),
+						tiles.get(0).getImageWidth(),
 						tempFolderOfTargetSplitLocation );
 				
-				/* Creates ImageInfo object for each cell to calculate RGB */ 
-				/* (When target image is split in the tile dimensions, each piece is called cell.) */
+				//Creates ImageInfo object for each cell to calculate RGB 
 				ArrayList<ImageInfo> cells = new ArrayList<ImageInfo>();
 				
-				for (final File fileEntry : tempFolderOfTargetSplit.listFiles()) {
+				for (final File fileEntry : 
+					tempFolderOfTargetSplit.listFiles()) {
 					ImageInfo temp = new ImageInfo();
 					temp.setFilePath(fileEntry.getPath());
 					temp.calculateRGB();
@@ -102,26 +104,31 @@ public class Mosnuic {
 				
 				long sOut = System.currentTimeMillis();
 				outputArray = new String[cells.size()];
-				//Start
+				
+				/*Randomize selection of cells in the list to avoid patterns.*/
 				ArrayList<Integer> numList = new ArrayList<Integer>();
 				for (int k=0 ; k<cells.size(); k++){
-					numList.add(k);
-				
+					numList.add(k);				
 				}
 				long startToShuffle = System.currentTimeMillis();
+				//This inbuilt method shuffles the cells to be selected.
 				Collections.shuffle(numList);
 				long endToShuffle = System.currentTimeMillis();
 				long timeToShuffle = endToShuffle - startToShuffle;
 				System.out.println("Time to shuffle "+timeToShuffle);
 				for(int m=0; m<numList.size(); m++){
-					//System.out.println(numList.get(m));
-					calculateBestMatchElement(numList.get(m), cells, tiles, repetition);
+					calculateBestMatchElement(numList.get(m), cells, tiles,
+							repetition);
 				}
- 				//createoutputArray(cells, tiles, repetition);			
 				
+				//Create an object to create an outout image.
 				ProcessImage oi = new ProcessImage();
-				oi.renderOutputImage(targetImage, tiles.get(0).getImageHeight(), tiles.get(0).getImageWidth(),
+				oi.renderOutputImage(targetImage,
+						tiles.get(0).getImageHeight(),
+						tiles.get(0).getImageWidth(),
 						outputArray, outputFileLocation, outputFileFormat);
+				
+				//delete the Temp Directory after a successful run.
 				deleteDirectory(tempFolderOfTargetSplit);
 				long eOut = System.currentTimeMillis();;
 				System.out.println("Time for output: "+ (eOut - sOut));
@@ -130,7 +137,8 @@ public class Mosnuic {
 				System.out.println("Total Time: " +totalTime);
 			}
 			else {
-				System.out.println("Not enough tiles in the library to create an output image.");
+				System.out.println("Not enough tiles in the library to" +
+						"create an output image.");
 				System.exit(0);
 			}
 		}else {
@@ -138,40 +146,20 @@ public class Mosnuic {
 			System.exit(0);
 		}
 	}
-
-	/*private static void createoutputArray(ArrayList<ImageInfo> cells,
-			ArrayList<ImageInfo> tiles, int repetition) {
-		int mid;
-		int mrow, mcol, cols;
-		int i, j, k, div;
-		int targetImageHeight = ti.getHeight();
-		int targetImageWidth = ti.getWidth();
-
-		calculate total number of cells, and calculate dimensions of each cell
-		cols = (int) (targetImageWidth/tiles.get(0).getImageWidth());
-		mrow = (int) ((targetImageHeight/tiles.get(0).getImageHeight())/2);
-		mcol = cols/2; 
-		mid=(mrow*cols)+mcol;
-		
-		if(cols%5==0)
-			div=(cols-1)/5;
-		else
-			div=cols/5;
-		
-		for(i=0;i<div;i++){
-			for(j=(mid-1)-i, k=mid+i;;j-=div, k+=div){
-				if(j>=0)
-					calculateBestMatchElement(j, cols, cells, tiles, repetition);
-				if(k<cells.size())
-					calculateBestMatchElement(k, cols, cells, tiles, repetition);
-				if(j<0 && k>=cells.size())
-					break;
-			}
-		}
-	}*/
-
-	private static void calculateBestMatchElement(int pos, ArrayList<ImageInfo> cells,
-			ArrayList<ImageInfo> tiles, int repetition) {
+	
+	/*method calculates best match tiles for the random position */
+	/**
+     * @param pos			position of the cell to be read from the 
+     *                      list of cells.
+     * 
+     * @param cells			list of ImageInfo objects for the broken
+     * 						down target image.
+     * @param tiles			list of ImageInfo objects for tile library images.
+     * @param repetition	number of times a tile can be repeated.
+     */
+	private static void calculateBestMatchElement(int pos,
+			ArrayList<ImageInfo> cells, ArrayList<ImageInfo> tiles,
+			int repetition) {
 		
 		Map <Double,String> rgbDiff = new HashMap<Double,String>();
 		double diff=0.0;
@@ -183,14 +171,13 @@ public class Mosnuic {
 		
 		double min = Collections.min(rgbDiff.keySet());
 		
-		//Add the tile with minimum distance to the outputArray in the very first iteration for a cell.
+		/*Add the tile with minimum distance to the outputArray in the very
+		 *first iteration for a cell.*/
 		if(pos==0){
 			outputArray[pos]=rgbDiff.get(min);
-			//System.out.println(pos+"\t"+outputArray[pos]);
 		}
 		else if(pos!=0 && countOccurences(rgbDiff.get(min)) < repetition){
 			outputArray[pos]=rgbDiff.get(min);
-			//System.out.println(pos+"\t"+outputArray[pos]);
 		}
 		//If tiles repetition exceeds the maximum number of times allowed:
 		else{
@@ -211,35 +198,39 @@ public class Mosnuic {
 	}
 
 	/*Euclidean distance calculation */
+	/**
+     * @param cell			part of the target image object that is being
+     * 						compared.
+     * @param tile			the tile object that is being compared.
+     * @return				the difference between the the CIELAB values of
+     * 						both images.
+     */
 	public static double compareImages(ImageInfo cell,ImageInfo tile) {
 		double diff = 5000;
-		
-		/*RGB Color Model
-		double deltaRed = (cell.red - tile.red);
-		double deltaBlue = (cell.blue - tile.blue);
-		double deltaGreen = (cell.green - tile.green);
-		diff = ((deltaRed*deltaRed)+(deltaBlue*deltaBlue)+(deltaGreen*deltaGreen));*/
 		
 		double deltaCieL = (cell.cieL - tile.cieL);
 		double deltaCieA = (cell.cieA - tile.cieA);
 		double deltaCieB = (cell.cieB - tile.cieB);
-		
-		/*YUV Color Model
-		double deltaYuvY = (cell.yuvY - tile.yuvY);
-		double deltaYuvU = (cell.yuvU - tile.yuvU);
-		double deltaYuvV = (cell.yuvV - tile.yuvV);*/
-		
-		diff = ((deltaCieL*deltaCieL)+(deltaCieA*deltaCieA)+(deltaCieB*deltaCieB));	
+	
+		diff = ((deltaCieL*deltaCieL)+
+				(deltaCieA*deltaCieA)+
+				(deltaCieB*deltaCieB));	
 		return diff;
 	}
 
 	/*Temp Directory deletion */
+	/**
+     * @param directory		File object of the temporary directory.
+     * @return				a boolean value. TRUE if the directory is deleted.
+     * 						FALSE if the directory is not deleted.
+     */
 	public static boolean deleteDirectory(File directory) {
 		if(directory.isDirectory()){
 			String[] files = directory.list();
 			for(int i = 0; i< files.length ; i++) {
-				boolean success = deleteDirectory(new File(directory,files[i]));
-				if(!success) {
+				boolean deleted = deleteDirectory
+						(new File(directory,files[i]));
+				if(!deleted) {
 					return false;
 				}
 			}
@@ -248,7 +239,11 @@ public class Mosnuic {
 	}
 
 	/* Helper to count the tile occurrences.*/
-	public static Integer countOccurences(String filepath){
+	/**
+     * @param filepath		file path of the tile image.
+     * @return				number of times a tile image is used.
+     */
+	public static int countOccurences(String filepath){
 		if(!imageCount.containsKey(filepath)){
 			imageCount.put(filepath, 0);
 		}

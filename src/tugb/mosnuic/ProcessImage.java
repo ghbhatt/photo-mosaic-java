@@ -10,9 +10,24 @@ import javax.imageio.ImageIO;
 
 public class ProcessImage {
 
-	public void split(String filePath,String targetImageFileFormat, int height, int width,
-			String tempFolderOfTargetSplitLocation) throws IOException {
-
+	/*Method to Split a given image*/
+	/**
+     * @param filePath							file path of the image to
+     * 											be split.
+     * @param targetImageFileFormat				file format of the image.
+     * @param height							dimensions according to 
+     * 											which the target image should
+     * 											be split by height.
+     * @param width								dimensions according to
+     * 											which the target image should
+     * 											be split by width.
+     * @param tempFolderOfTargetSplitLocation	file path where the temporary
+     * 											folder should be created.
+     * @throws IOException						if the image cannot be read.
+     */
+	public void split(String filePath,String targetImageFileFormat, int height,
+			int width, String tempFolderOfTargetSplitLocation)
+					throws IOException {
 		// used in the loops
 		int x = 0 ; 
 		int y = 0 ;
@@ -27,7 +42,8 @@ public class ProcessImage {
 		int targetImageHeight = image.getHeight();
 		int targetImageWidth = image.getWidth();
 
-		/*calculate total number of cells, and calculate dimensions of each cell*/
+		/*calculate total number of cells, and calculate dimensions of
+		 *  each cell*/
 		int rows = (targetImageHeight/height); 
 		int cols = (targetImageWidth/width);
 		int totalCells = rows * cols;
@@ -35,55 +51,76 @@ public class ProcessImage {
 		int cellWidth = image.getWidth() / cols; 
 		int cellHeight = image.getHeight() / rows;
 
-		/*Define an Image array to hold totalCells in the image*/
+		/*BufferedImage array to hold Cells*/
 		int count = 0;
 		BufferedImage bi[] = new BufferedImage[totalCells];
 
-		/*fill image array with the split image*/
+		/*fill the BufferedImage array*/
 		for (x = 0; x < rows; x++) {
 			for (y = 0; y < cols; y++) {
 				//Initialize the image array with image totalCells
 				if(image.getType() == 0) {
 					/* Some image types like Tiff return 0 with getTpye().
-					 * Hence, if the getType() returns 0, we set it to a random Integer.*/
+					 * Hence, if the getType() returns 0, we set it to a
+					 *  non-zero integer.*/
 					bi[count] = new BufferedImage(cellWidth, cellHeight, 5);
 				} else {
-					bi[count] = new BufferedImage(cellWidth, cellHeight, image.getType());
+					bi[count] = new BufferedImage(cellWidth, cellHeight,
+							image.getType());
 				}
-				// draw each cell of the image
+				//Given a BufferedImage array, draw the cells on a canvas 
 				Graphics2D gr = bi[count++].createGraphics();
-				gr.drawImage(image, 0, 0, cellWidth, cellHeight, cellWidth * y, cellHeight * x,
-						cellWidth * y + cellWidth, cellHeight * x + cellHeight, null);
+				gr.drawImage(image, 0, 0, cellWidth, cellHeight, cellWidth * y,
+						cellHeight * x, cellWidth * y + cellWidth,
+						cellHeight * x + cellHeight, null);
 				gr.dispose();
 			}
 		}
 
+		//name the newly created cells to store in a Temp Directory.
 		NumberFormat form = NumberFormat.getInstance();
 		form.setMinimumIntegerDigits(4);
 
 		for (i = 0; i < bi.length; i++) {
 			//split target image, and store it in a temp folder
-			ImageIO.write(bi[i], targetImageFileFormat, new File(tempFolderOfTargetSplitLocation + 
-					form.format(i) + "." + targetImageFileFormat));
+			ImageIO.write(bi[i], targetImageFileFormat,
+					new File(tempFolderOfTargetSplitLocation + 
+							form.format(i) + "." + targetImageFileFormat));
 		}
-	}
+		
+	} 
 
-	protected void  renderOutputImage(String filePath, int tileHeight, int tileWidth, String[] outputArray,
-			String outputFileLocation, String outputFileFormat) throws IOException {
+	/*Method to join multiple images to form a single image*/
+	/**
+	 * @param filePath				Target image file path.		
+	 * @param tileHeight			Height of a tile to calculate output
+	 * 								image dimensions.
+	 * @param tileWidth				Width of a tile to calculate output
+	 * 								image dimensions.
+	 * @param outputArray			Array containing best matching tiles. 								
+	 * @param outputFileLocation	Location to write the output image.
+	 * @param outputFileFormat		File format of the output image
+	 * @throws IOException			if the image cannot be written.
+	 */
+	protected void renderOutputImage(String filePath, int tileHeight,
+			int tileWidth, String[] outputArray, String outputFileLocation,
+			String outputFileFormat) throws IOException {
 
 		int num = 0;  
 		int i = 0; 
 		int j = 0;
+
 		/*Load target image into memory*/
 		File file = new File(filePath);
 		FileInputStream fis = new FileInputStream(file);
 		BufferedImage targetImage = ImageIO.read(fis);
 
-		// target image dimensions
+		//target image dimensions
 		int targetImageHeight = targetImage.getHeight();
 		int targetImageWidth = targetImage.getWidth();
 
-		/*calculate total number of cells, and calculate dimensions of each cell*/
+		/*calculate total number of cells, and calculate dimensions of
+		 * each cell*/
 		int rows = (targetImageHeight/tileHeight); 
 		int cols = (targetImageWidth/tileWidth);
 		int totalCells = rows * cols;
@@ -96,6 +133,7 @@ public class ProcessImage {
 		for (i = 0; i < totalCells; i++) {  
 			imgFiles[i] = new File(outputArray[i]);  
 		} 
+
 		// array to read images
 		BufferedImage[] buffImages = new BufferedImage[totalCells];  
 		for (i = 0; i < totalCells; i++) {  
@@ -104,21 +142,24 @@ public class ProcessImage {
 			} catch (IOException e) {
 				System.out.println("Cannot create output image.");
 			}  
-		}  
-		int type = buffImages[0].getType();
+		} 
 
-		BufferedImage finalImg = new BufferedImage(cellWidth*cols, cellHeight*rows, type);
+		int type = buffImages[0].getType(); 
+		BufferedImage finalImg = new BufferedImage(cellWidth*cols,
+				cellHeight*rows, type);
 
 		//renders the output image.
 		for (i = 0; i < rows; i++) {  
 			for (j = 0; j < cols; j++) {  
-				finalImg.createGraphics().drawImage(buffImages[num], cellWidth * j, cellHeight * i, null);  
+				finalImg.createGraphics().drawImage(buffImages[num],
+						cellWidth * j, cellHeight * i, null);  
 				num++;  
 			}  
 		}  
-		
-		try {
-			ImageIO.write(finalImg,outputFileFormat, new File(outputFileLocation));
+
+		try{
+			ImageIO.write(finalImg,outputFileFormat,
+					new File(outputFileLocation));
 			System.out.println("Final Image created.");  
 		} catch (IOException e) {
 			//e.printStackTrace();
