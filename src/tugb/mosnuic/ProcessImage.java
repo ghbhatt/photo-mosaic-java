@@ -102,7 +102,7 @@ public class ProcessImage {
 			try {
 				buffImages[i] = ImageIO.read(imgFiles[i]);
 			} catch (IOException e) {
-				System.out.println("cannot create output image.");
+				System.out.println("Cannot create output image.");
 			}  
 		}  
 		int type = buffImages[0].getType();

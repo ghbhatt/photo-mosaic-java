@@ -1,6 +1,12 @@
 package tugb.mosnuic;
 
 import java.io.File;
+//import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+//import javax.swing.text.html.HTMLDocument.Iterator;
 
 public class ParseInputArguments {
 	private static String targetImageFilePath;
@@ -169,8 +175,8 @@ public class ParseInputArguments {
 					}
 					else
 						targetImageFilePath = args[i];
-					int posTarget = args[i].lastIndexOf('.');
-					targetImageFileFormat = args[i].substring(posTarget+1);
+					/*int posTarget = args[i].lastIndexOf('.');
+					targetImageFileFormat = args[i].substring(posTarget+1);*/
 				}
 				else
 				{
@@ -239,7 +245,7 @@ public class ParseInputArguments {
 	public static boolean checkFlag_O(String args3){
 		String targetPath = new String(args3);
 		int lastIndexSlash = targetPath.lastIndexOf(File.separatorChar);
-		if(checkFileTypes(args3)){
+		if(checkFileTypes(args3.substring(args3.lastIndexOf(".")+1))){
 			if(lastIndexSlash==-1){
 				OutputImagePathFound = 1;
 				outputImageFilePath = args3;
@@ -297,56 +303,82 @@ public class ParseInputArguments {
 
 	/*Checking for files. Should be a file, exist and have a supported format*/
 	private static boolean checkTargetImagePath(String path) {
-		File cliTargetImage = new File(path);
-		boolean chkExists = cliTargetImage.exists();
-		boolean chkFile = cliTargetImage.isFile();
-		boolean chkFileTypes = checkFileTypes(path);
-		return (chkExists && chkFile && chkFileTypes);
+		try {	
+			//System.out.println("Path = "+path);
+			File cliTargetImage = new File(path);
+			boolean chkExists = cliTargetImage.exists();
+			boolean chkFile = cliTargetImage.isFile();
+			//boolean chkFileTypes = checkFileTypes(path);
+			boolean checkSpecialCond = false;
+
+			if(chkExists && chkFile){
+				ImageInputStream iis = ImageIO.createImageInputStream(cliTargetImage);
+				java.util.Iterator<ImageReader> iter = ImageIO.getImageReaders(iis);
+				if (!((java.util.Iterator<ImageReader>) iter).hasNext()) {
+					checkSpecialCond = false;
+				}
+				ImageReader reader = (ImageReader) iter.next();
+				iis.close();
+
+				String format = reader.getFormatName();
+				checkSpecialCond = checkFileTypes(format);
+				if(checkSpecialCond)
+					targetImageFileFormat = format;
+			}	
+			return (chkExists && chkFile && checkSpecialCond);
+		} catch (Exception e) {
+			System.out.println("There was a problem while reading the Target Image file. Please check the file and try again.");
+		}
+		return false;
+		
+		
+		
+		
 	}
 
 	/*Check for formats of file*/
-	private static boolean checkFileTypes(String path) {
-		boolean chkBMP = path.endsWith(".bmp"); 
-		boolean chkGIF = path.endsWith(".gif"); 
-		boolean chkJPEG = path.endsWith(".jpeg"); 
-		boolean chkJPG = path.endsWith(".jpg");
-		boolean chkPNG = path.endsWith(".png"); 
-		boolean chkTIFF = path.endsWith(".tiff");
-		boolean chkTIF = path.endsWith(".tif");		
+	private static boolean checkFileTypes(String format) {
+		boolean chkBMP = format.equalsIgnoreCase("bmp");
+		boolean chkGIF = format.equalsIgnoreCase("gif");
+		boolean chkJPEG = format.equalsIgnoreCase("jpeg");
+		boolean chkJPG = format.equalsIgnoreCase("jpg");
+		boolean chkPNG = format.equalsIgnoreCase("png");
+		boolean chkTIFF = format.equalsIgnoreCase("tiff");
+		boolean chkTIF = format.equalsIgnoreCase("tif");		
 		return (chkBMP || chkGIF || chkJPEG || chkJPG || chkPNG || chkTIFF || chkTIF);
 	}
 
 	/*Getter functions for all private members*/
 	public String getTargetImageFilePath()
 	{
-		//System.out.println("TargetImageFilePath\t "+targetImageFilePath);
+		System.out.println("TargetImageFilePath\t "+targetImageFilePath);
 		return targetImageFilePath;
 	}
 
 	public String getTileDirectory()
 	{
-		//System.out.println("TileDirectory\t"+tileDirectory);
+		System.out.println("TileDirectory\t"+tileDirectory);
 		return tileDirectory;
 	}
 
 	public int getMaxNumberOfTiles()
 	{
-		//System.out.println("MaxNumberOfTilesRepeated\t"+maxNumberOfTiles);
+		System.out.println("MaxNumberOfTilesRepeated\t"+maxNumberOfTiles);
 		return maxNumberOfTiles;
 	}
 
 	public String getTargetImageFileFormat(){
-		//System.out.println("TargetImageFileFormat\t"+targetImageFileFormat);
+		System.out.println("TargetImageFileFormat\t"+targetImageFileFormat);
 		return targetImageFileFormat;
 	}
 
 	public String getOutputImageFileFormat(){
-		//System.out.println("OutputImageFileFormat\t"+outputImageFileFormat);
+		System.out.println("OutputImageFileFormat\t"+outputImageFileFormat);
 		return outputImageFileFormat;
 	}
 
 	public String getOutputImageFilePath(){
-		//System.out.println("OutputImageFilePath\t"+outputImageFilePath);
+		System.out.println("OutputImageFilePath\t"+outputImageFilePath);
 		return outputImageFilePath;
 	}	
 }
