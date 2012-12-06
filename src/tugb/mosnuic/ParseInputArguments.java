@@ -136,34 +136,35 @@ public class ParseInputArguments {
 					//Throw error
 					System.out.println(ERROR);
 					System.out.println("Redundant directory in input");
+					result = false;					
 					System.exit(0);
-					result = false;
-				}
+					}
 				break;
 			case FLAG:
 				try {
 					if(!checkFlagArgs(args[i], args[++i])){
 						System.out.println(ERROR);
 						System.out.println("Please check flag arguments");
-						System.exit(0);
 						result = false;
+						System.exit(0);						
 					}
 				} catch (Exception e) {	
 					System.out.println("Invalid inputs provided.");
 					System.out.println(ERROR);
-					System.exit(0);
 					result = false;
+					System.exit(0);					
 				}
 				break;
 			case ERROR:
 				System.out.println("Invalid inputs provided.");
 				System.out.println(ERROR);
-				System.exit(0);
 				result = false;
+				System.exit(0);				
 				break;
 			default:
 				System.out.println("Invalid inputs provided.");
 				System.out.println(ERROR);
+				result = false;
 				break;
 			}
 		}
@@ -443,11 +444,18 @@ public class ParseInputArguments {
 				try {
 					String parent = args3.substring(0, lastIndexSlash);
 					File outputParent = new File(parent);
+					File entireDir = new File(args3);
 					boolean chkExists = outputParent.exists();
 					boolean chkDir = outputParent.isDirectory();
 					boolean chkDirRead = outputParent.canRead();
 					boolean chkDirWrite = outputParent.canWrite();
 					
+					if(entireDir.exists() && entireDir.isDirectory()){
+						System.out.println("There already exists a directory" +
+								"with the same name as the output file name.");
+						System.exit(0);
+						return false;
+					}
 					if(chkExists && chkDir && chkDirRead && chkDirWrite){
 						OutputImagePathFound = 4;
 						outputImageFileName = args3.substring
