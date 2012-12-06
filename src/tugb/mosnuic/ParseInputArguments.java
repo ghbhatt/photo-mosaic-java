@@ -35,7 +35,13 @@ public class ParseInputArguments {
 		TILE_LIBRARY_DIR,
 		ERROR		
 	}
-
+	
+	/*Wrapper class to validate input arguments.*/
+	/**
+	 * @param args 		Array of Strings with input arguments from
+	 * 					the shell script.
+	 * @return			true if all inputs are valid.
+	 */
 	public boolean ParsePath(String args[]){
 
 		/*Check if argument count is less than 2 or a multiple of 2*/
@@ -56,14 +62,21 @@ public class ParseInputArguments {
 		return finalCheck;
 	}
 
+	/*Main function that validates each input one at a time.*/
+	/**
+	 * @param args		Array of Strings with input arguments from
+	 * 					the wrapper class ParsePath.	
+	 * @return			true if the arguments are valid. 
+	 */
 	public static boolean checkArgs(String[] args){
 
 		/*Initialize variables*/
 		int i;
 		boolean result = true;
 
-		/*Determines input type which is either a FLAG, FILE, DIR.
-		 * If neither then throw error and terminate*/
+		/*Determines input type which is either a FLAG, TARGET_IMAGE_FILE,
+		 * TILE_LIBRARY_DIR.
+		 * If neither then throw ERROR and terminate*/
 		for(i=0;i<args.length;i++){
 			String inputType = checkInputType(args[i]);
 			INPUT_TYPE ip = INPUT_TYPE.valueOf(inputType);
@@ -90,7 +103,7 @@ public class ParseInputArguments {
 											tempName.length());
 						}
 						result = true;
-					} catch (IOException e) {
+					} catch (Exception e) {
 						System.out.println("There was an IO Exception while" +
 								"handling the target image file.");
 						System.exit(0);
@@ -122,7 +135,7 @@ public class ParseInputArguments {
 				{
 					//Throw error
 					System.out.println(ERROR);
-					System.out.println("Redundant dir in input");
+					System.out.println("Redundant directory in input");
 					System.exit(0);
 					result = false;
 				}
@@ -135,20 +148,22 @@ public class ParseInputArguments {
 						System.exit(0);
 						result = false;
 					}
-				} catch (Exception e) {					
-					System.out.println("There was an error while handling" +
-							"the files. Please try again");
+				} catch (Exception e) {	
+					System.out.println("Invalid inputs provided.");
+					System.out.println(ERROR);
 					System.exit(0);
 					result = false;
 				}
 				break;
 			case ERROR:
-				System.out.println("There was an error while handling" +
-						"the files. Please try again");
+				System.out.println("Invalid inputs provided.");
+				System.out.println(ERROR);
 				System.exit(0);
 				result = false;
 				break;
 			default:
+				System.out.println("Invalid inputs provided.");
+				System.out.println(ERROR);
 				break;
 			}
 		}
@@ -157,6 +172,11 @@ public class ParseInputArguments {
 
 	/*Determines input type which is either a FLAG, FILE, DIR.
 	 * If neither then default is ERROR*/
+	/**
+	 * @param arg		One argument from the args array.
+	 * @return			Type of the argument [TARGET_IMAGE_FILE,
+	 * 					TILE_LIBRARY_DIR, FLAG]
+	 */
 	private static String checkInputType(String arg) {
 		String inputType = new String("ERROR");
 
@@ -169,6 +189,18 @@ public class ParseInputArguments {
 
 		return inputType;
 	}
+	
+	/*Find out the necessary information about the output file path based on
+	 * either of the six cases:
+	 * Case 0: "-o" flag is not supplied
+	 * Case 1: Output path has a supported file extension and is a
+	 * 			relative path
+	 * Case 2: Output path has a supported file extension and is an
+	 * 			absolute path
+	 * Case 3: Output path has no extension and is a relative path
+	 * Case 4: Output path has no extension and has an absolute path
+	 * Case 5: Output path has an unsupported extension and has a 
+	 * 			relative path*/
 	
 	private static void createOutputImageInformation(){
 		switch(OutputImagePathFound){
@@ -213,6 +245,13 @@ public class ParseInputArguments {
 		}
 	}
 	
+	/*Validates the input argument to check if it is the target image path
+	 * and checks the restrictions on it.*/
+	/**
+	 * @param path		An input argument from the args array
+	 * @return			true if the input is identified to be the 
+	 * 					target image path
+	 */
 	private static boolean checkTargetImagePath(String path) {
 		try {
 			File cliTargetImage = new File(path);
@@ -252,6 +291,13 @@ public class ParseInputArguments {
 		return false;
 	}
 
+	/*Validates the input argument to check if it is the tile directory
+	 * and checks the restrictions on it.*/
+	/**
+	 * @param path		An input argument from the args array
+	 * @return			true if the input is identified to be the 
+	 * 					tile directory
+	 */
 	private static boolean checkTileDirectory(String path) {
 		try {
 			File cliLibImages = new File(path);
@@ -274,6 +320,13 @@ public class ParseInputArguments {
 		return false;
 	}
 
+	/*Identifies the flag and calls the helper to validate its value.*/
+	/**
+	 * @param flag		Optional flag argument from the args array
+	 * @param value		Value associated with the flag
+	 * @return			true if it is a supported combination of flag and
+	 * 					value.
+	 */
 	private static boolean checkFlagArgs(String flag, String value) {
 		boolean returnType = false;		
 		if(flag.equals("-o"))
@@ -283,6 +336,11 @@ public class ParseInputArguments {
 		return returnType;		
 	}
 		
+	/*Helper function to validate the value associated with the "-r" flag.*/
+	/**
+	 * @param value		Value associated with the "-r" flag.
+	 * @return			true if provided is an unsigned integer.
+	 */
 	private static boolean checkFlag_R(String value) {
 
 		try {
@@ -299,12 +357,19 @@ public class ParseInputArguments {
 			return (repTiles > 0);
 		} catch (NumberFormatException e) {
 			System.out.println(ERROR);
-			System.out.println("Integer n4 in [-r n4] not parseable");
+			System.out.println("Value n4 in [-r n4] not parseable");
 			System.exit(0);
 			return false;
 		}
 	}
 	
+	/*Helper function to validate the value associated with the "-o" flag.
+	 * OutputImagePathFound is set to a particular value based on the cases
+	 * mentioned above.*/
+	/**
+	 * @param value		Value associated with the "-o" flag.
+	 * @return			true if the value is a valid output file path.
+	 */
 	public static boolean checkFlag_O(String args3){
 		String targetPath = new String(args3);
 		int lastIndexSlash = targetPath.lastIndexOf(File.separatorChar);
@@ -396,14 +461,14 @@ public class ParseInputArguments {
 					else{
 						System.out.println(ERROR);
 						System.out.println("Please confirm that output" +
-								"directory exists and is writable");
+								"directory exists and has write permissions.");
 						System.exit(0);
 						return false;
 					}
 				} catch (Exception e) {
 					System.out.println(ERROR);
 					System.out.println("Please confirm that output" +
-							"directory exists and is writable");
+							"directory exists and has write permissions.");
 					System.exit(0);
 					return false;
 				}
@@ -412,7 +477,11 @@ public class ParseInputArguments {
 		return false;		 
 	}
 	
-	
+	/*Checks if the file format belongs to one of the allowed formats.*/
+	/**
+	 * @param format		Format of the image argument.
+	 * @return				true if the format is supported.
+	 */
 	private static boolean checkFileTypes(String format) {
 		boolean chkBMP = format.equalsIgnoreCase("bmp");
 		boolean chkGIF = format.equalsIgnoreCase("gif");
@@ -423,6 +492,11 @@ public class ParseInputArguments {
 		return (chkBMP || chkGIF || chkJPEG || chkJPG || chkPNG || chkTIF);
 	}
 	
+	/*Checks if the file extension belongs to one of the allowed formats.*/
+	/**
+	 * @param format		Extension of the image argument.
+	 * @return				true if the extension is supported.
+	 */
 	private static boolean checkFileTypesForOP(String format) {
 		boolean chkBMP = format.equalsIgnoreCase("bmp");
 		boolean chkGIF = format.equalsIgnoreCase("gif");
@@ -433,7 +507,10 @@ public class ParseInputArguments {
 		return (chkBMP || chkGIF || chkJPEG || chkJPG || chkPNG || chkTIFF);
 	}
 
-	/*Function to check if any flags are repeated or not*/
+	/*Helper function to check if any flags are repeated or not.*/
+	/**
+	 * @param args		Input arguments obtained from the ParsePath class.
+	 */
 	private void checkRepeatedFlags(String[] args) {
 		int count_o = 0;
 		int count_r = 0;
@@ -454,8 +531,13 @@ public class ParseInputArguments {
 		}
 	}
 
-	/*Function to check number of arguments. It should be atleast 2
-	 * and a multiple of 2*/
+	/*Helper method to check number of arguments. It should be at least two
+	 * and a multiple of two. This method is purely a convenient check so
+	 * that we do not perform unnecessary processing. It is not scalable
+	 * and is a quick check to validate the input argument array.*/
+	/**
+	 * @param args		Input arguments obtained from the ParsePath class.	
+	 */
 	private void checkNumberOfArguments(String[] args) {
 		int arg_count = args.length;
 
@@ -476,39 +558,50 @@ public class ParseInputArguments {
 		}				
 	}
 	
+	/*Getter for target image file path.*/
 	public String getTargetImageFilePath()
 	{
 		System.out.println("TargetImageFilePath\t "+targetImageFilePath);
 		return targetImageFilePath;
 	}
 
+	/*Getter for target image file name.*/
 	public String getTargetImageFileName()
 	{
 		System.out.println("TargetImageFileName\t "+targetImageFileName);
 		return targetImageFileName;
 	}
+	
+	/*Getter for target image file format.*/
 	public String getTargetImageFileFormat()
 	{
 		System.out.println("TargetImageFileFormat\t "+targetImageFileFormat);
 		return targetImageFileFormat;
 	}
+	
+	/*Getter for target image file extension.*/
 	public String getTargetImageFileExtenstion()
 	{
 		System.out.println("TargetImageFileExtenstion\t "+
 	targetImageFileExtension);
 		return targetImageFileExtension;
 	}
+	
+	/*Getter for tile directory path.*/
 	public String getTileDirectory()
 	{
 		System.out.println("TileDirectory\t"+tileDirectory);
 		return tileDirectory;
 	}
+	
+	/*Getter for number of repetitions allowed.*/
 	public int getMaxNumberOfTiles()
 	{
 		System.out.println("MaxNumberOfTilesRepeated\t"+maxNumberOfTiles);
 		return maxNumberOfTiles;
 	}
 	
+	/*Getter for output image file extension.*/
 	public String getOutputImageFileExtension()
 	{
 		System.out.println("OutputImageFileExtension\t"+
@@ -516,18 +609,23 @@ public class ParseInputArguments {
 		return outputImageFileExtension;
 	}
 	
+	/*Getter for output image file format.*/
 	public String getOutputImageFileFormat()
 	{
 		System.out.println("outputImageFileFormat\t"+
 	outputImageFileFormat);
 		return outputImageFileFormat;
 	}
+	
+	/*Getter for output image file name.*/
 	public String getOutputImageFileName()
 	{
 		System.out.println("getOutputImageFileName\t"+
 	outputImageFileName);
 		return outputImageFileName;
 	}
+	
+	/*Getter for output image file path.*/
 	public String getOutputImageFilePath()
 	{
 		System.out.println("getOutputImageFilePath\t"+
