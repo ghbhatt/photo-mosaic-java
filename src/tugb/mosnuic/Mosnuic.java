@@ -76,8 +76,9 @@ public class Mosnuic {
 			int targetImageSize  = ti.getHeight() * ti.getWidth();
 			int tileSize = (int) tiles.get(0).getImageSize();
 			int totalCells = targetImageSize/tileSize;
+			double tileCount = tiles.size() * repetition; 
 			
-			if((tiles.size()* repetition) >= totalCells){
+			if(tileCount >= totalCells){
 				/* (When target image is split in the tile dimensions,
 				 * each piece is called cell.) */
 				
