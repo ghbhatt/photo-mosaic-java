@@ -33,11 +33,12 @@ public class Mosnuic {
 			String outputFileLocation = parser.getOutputImageFilePath();
 			String outputFileFormat = parser.getOutputImageFileFormat();
 			//Gets current user path to create a Temp Directory
-			String userPath = System.getProperty("user.dir"); 
-
+			//String userPath = System.getProperty("user.dir"); 
+			String tempPath = "/tmp";
+			
 			int repetition = parser.getMaxNumberOfTiles();
 			String tempFolderOfTargetSplitLocation = 
-					userPath+"/DemoDirectory/";
+					tempPath+"/DemoDirectory/";
 			File tempFolderOfTargetSplit = 
 					new File(tempFolderOfTargetSplitLocation);
 			
@@ -74,11 +75,11 @@ public class Mosnuic {
 			ti = ImageIO.read(new File(targetImage));
 			
 			int targetImageSize  = ti.getHeight() * ti.getWidth();
-			int tileSize = (int) tiles.get(0).getImageSize();
+			int tileSize = tiles.get(0).getImageSize();
 			int totalCells = targetImageSize/tileSize;
-			double tileCount = tiles.size() * repetition; 
+			int checkTileCount = tiles.size() * repetition; 
 			
-			if(tileCount >= totalCells){
+			if(checkTileCount >= totalCells){
 				/* (When target image is split in the tile dimensions,
 				 * each piece is called cell.) */
 				

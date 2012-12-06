@@ -140,4 +140,6 @@ public class ImageInfo {
 	public int getImageSize(){
 		return imageSize;
 	}
+	
+	 
 }

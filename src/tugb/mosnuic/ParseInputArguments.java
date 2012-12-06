@@ -6,7 +6,6 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
-
 public class ParseInputArguments {
 	private static String targetImageFilePath;
 	private static String targetImageFileName;
@@ -18,15 +17,16 @@ public class ParseInputArguments {
 	private static String outputImageFileFormat;
 	private static String outputImageFileExtension;
 	private static int maxNumberOfTiles = 10000;
-	/*private static String targetImageFileParent;*/
 
 	static boolean TargetImagePathFound = false;
 	static int OutputImagePathFound = 0;
 	static boolean TileDirectoryPathFound = false;
 	static boolean OutputImagePathToBeConstructed = false;
 
-	static String ERROR = "The application accepts the input in the following format\nfile1 dir2 [-o file3] [-r n4]";
-	static String UNSUPPORTED_FORMAT = "The application only supports the JPEG, JPG, BMP, GIF and TIFF image formats";
+	static String ERROR = "The application accepts the input in the following"+
+			"format\nfile1 dir2 [-o file3] [-r n4]";
+	static String UNSUPPORTED_FORMAT = "The application only supports the" +
+			"JPEG, JPG, BMP, GIF and TIFF image formats";
 	static String OUTPUT_SUFFIX = "_out";
 
 	public enum INPUT_TYPE {
@@ -54,7 +54,6 @@ public class ParseInputArguments {
 		createOutputImageInformation();
 
 		return finalCheck;
-
 	}
 
 	public static boolean checkArgs(String[] args){
@@ -63,7 +62,8 @@ public class ParseInputArguments {
 		int i;
 		boolean result = true;
 
-		/*Determines input type which is either a FLAG, FILE, DIR. If neither then throw error and terminate*/
+		/*Determines input type which is either a FLAG, FILE, DIR.
+		 * If neither then throw error and terminate*/
 		for(i=0;i<args.length;i++){
 			String inputType = checkInputType(args[i]);
 			INPUT_TYPE ip = INPUT_TYPE.valueOf(inputType);
@@ -74,7 +74,8 @@ public class ParseInputArguments {
 					TargetImagePathFound = true;	
 					try {
 						File temp = new File(args[i]);
-						targetImageFilePath = new String(temp.getCanonicalPath());
+						targetImageFilePath =
+								new String(temp.getCanonicalPath());
 						String tempName = temp.getName();
 
 						if(tempName.lastIndexOf(".")==-1){
@@ -82,13 +83,16 @@ public class ParseInputArguments {
 							targetImageFileExtension = "";
 						}
 						else{
-							targetImageFileName = tempName.substring(0, tempName.lastIndexOf("."));
-							targetImageFileExtension = tempName.substring(tempName.lastIndexOf("."), tempName.length());
+							targetImageFileName = tempName.substring(0,
+									tempName.lastIndexOf("."));
+							targetImageFileExtension = tempName.substring
+									(tempName.lastIndexOf("."),
+											tempName.length());
 						}
 						result = true;
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						System.out.println("There was an IO Exception while handling the target image file.");
+						System.out.println("There was an IO Exception while" +
+								"handling the target image file.");
 						System.exit(0);
 					}
 				}
@@ -96,7 +100,8 @@ public class ParseInputArguments {
 				{
 					//Throw error
 					result = false;
-					System.out.println("There seems to be a redundant file in input");
+					System.out.println("There seems to be a redundant" +
+							"file in input");
 					System.out.println(ERROR);
 					System.exit(0);
 				}
@@ -108,7 +113,8 @@ public class ParseInputArguments {
 						File temp = new File(args[i]);
 						tileDirectory = temp.getCanonicalPath();
 					} catch (IOException e) {
-						System.out.println("There was an IO Exception while handling the tile library directory.");
+						System.out.println("There was an IO Exception while" +
+								"handling the tile library directory.");
 						System.exit(0);
 					}
 				}
@@ -130,13 +136,15 @@ public class ParseInputArguments {
 						result = false;
 					}
 				} catch (Exception e) {					
-					System.out.println("There was an error while handling the files. Please try again");
+					System.out.println("There was an error while handling" +
+							"the files. Please try again");
 					System.exit(0);
 					result = false;
 				}
 				break;
 			case ERROR:
-				System.out.println("There was an error while handling the files. Please try again");
+				System.out.println("There was an error while handling" +
+						"the files. Please try again");
 				System.exit(0);
 				result = false;
 				break;
@@ -147,7 +155,8 @@ public class ParseInputArguments {
 		return result;
 	}
 
-	/*Determines input type which is either a FLAG, FILE, DIR. If neither then default is ERROR*/
+	/*Determines input type which is either a FLAG, FILE, DIR.
+	 * If neither then default is ERROR*/
 	private static String checkInputType(String arg) {
 		String inputType = new String("ERROR");
 
@@ -167,32 +176,40 @@ public class ParseInputArguments {
 			outputImageFileName = targetImageFileName+OUTPUT_SUFFIX;
 			outputImageFileExtension = targetImageFileExtension;
 			outputImageFileFormat = targetImageFileFormat;
-			outputImageFilePath = targetImageFilePath.substring(0, targetImageFilePath.lastIndexOf(File.separatorChar))
-					+File.separator+outputImageFileName+outputImageFileExtension;
+			outputImageFilePath = targetImageFilePath.substring(0,
+					targetImageFilePath.lastIndexOf(File.separatorChar))
+					+ File.separator + outputImageFileName +
+					outputImageFileExtension;
 			break;
 		case 1:
-			outputImageFilePath = targetImageFilePath.substring(0, targetImageFilePath.lastIndexOf(File.separatorChar))
-					+File.separator+outputImageFileName+outputImageFileExtension;
+			outputImageFilePath = targetImageFilePath.substring(0,
+					targetImageFilePath.lastIndexOf(File.separatorChar))
+					+ File.separator + outputImageFileName +
+					outputImageFileExtension;
 			break;
 		case 2:
 			break;
 		case 3:
 			outputImageFileFormat = targetImageFileFormat;
-			outputImageFilePath = targetImageFilePath.substring(0, targetImageFilePath.lastIndexOf(File.separatorChar))
-					+File.separator+outputImageFileName+outputImageFileExtension;
+			outputImageFilePath = targetImageFilePath.substring(0,
+					targetImageFilePath.lastIndexOf(File.separatorChar))
+					+ File.separator + outputImageFileName +
+					outputImageFileExtension;
 			break;
 		case 4:
 			outputImageFileFormat = targetImageFileFormat;
 			break;
 		case 5:
-			outputImageFilePath = targetImageFilePath.substring(0, targetImageFilePath.lastIndexOf(File.separatorChar))
-					+File.separator+outputImageFileName+outputImageFileExtension;
+			outputImageFilePath = targetImageFilePath.substring(0,
+					targetImageFilePath.lastIndexOf(File.separatorChar))
+					+ File.separator +outputImageFileName +
+					outputImageFileExtension;
 			outputImageFileFormat = targetImageFileFormat;
 			break;
 		default:
-		System.out.println("There was an error while handling the files. Please try again");
-		System.exit(0);
-			
+		System.out.println("There was an error while handling" +
+				"the files. Please try again");
+		System.exit(0);			
 		}
 	}
 	
@@ -206,8 +223,10 @@ public class ParseInputArguments {
 			boolean chkImageFileFormat = false;
 
 			if(chkExists && chkFile && chkFileRead){
-				ImageInputStream iis = ImageIO.createImageInputStream(cliTargetImage);
-				java.util.Iterator<ImageReader> iter = ImageIO.getImageReaders(iis);
+				ImageInputStream iis =
+						ImageIO.createImageInputStream(cliTargetImage);
+				java.util.Iterator<ImageReader> iter =
+						ImageIO.getImageReaders(iis);
 				if (!((java.util.Iterator<ImageReader>) iter).hasNext()) {
 					chkImageFileFormat = false;
 				}
@@ -226,10 +245,9 @@ public class ParseInputArguments {
 			}
 			return (chkExists && chkFile && chkFileRead);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			System.out.println("There was an IO Exception while handling the target image file.");
+			System.out.println("There was an IO Exception while handling" +
+					"the target image file.");
 			System.exit(0);
-
 		}
 		return false;
 	}
@@ -248,11 +266,10 @@ public class ParseInputArguments {
 
 			return (chkExists && chkDir && chkDirRead && chkDirEmpty);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			System.out.println("There was an IO Exception while handling the tile library directory.");
+			System.out.println("There was an IO Exception while" +
+					"handling the tile library directory.");
 			e.printStackTrace();
 			System.exit(0);
-
 		}
 		return false;
 	}
@@ -265,15 +282,15 @@ public class ParseInputArguments {
 			returnType = checkFlag_R(value);		
 		return returnType;		
 	}
-	
-	
+		
 	private static boolean checkFlag_R(String value) {
 
 		try {
 			int repTiles = Integer.parseInt(value);
 			if(repTiles<=0){
 				System.out.println(ERROR);
-				System.out.println("Please supply an unsigned integer for the n4 value");
+				System.out.println("Please supply an unsigned integer for" +
+						"the n4 value");
 				System.exit(0);
 			}
 			else{
@@ -291,20 +308,22 @@ public class ParseInputArguments {
 	public static boolean checkFlag_O(String args3){
 		String targetPath = new String(args3);
 		int lastIndexSlash = targetPath.lastIndexOf(File.separatorChar);
-		
 		int posDot = args3.lastIndexOf(".");
 		
 		if(checkFileTypesForOP(args3.substring(posDot+1))){
 			if(lastIndexSlash==-1){
 				OutputImagePathFound = 1;
 				outputImageFileName = args3.substring(0, posDot);
-				outputImageFileExtension = args3.substring(posDot, args3.length());
-				outputImageFileFormat = args3.substring(posDot+1, args3.length());
+				outputImageFileExtension = args3.substring(posDot,
+						args3.length());
+				outputImageFileFormat = args3.substring(posDot+1,
+						args3.length());
 				return true;
 			}
 			else{
 				try {
-					File outputParent = new File(args3.substring(0, lastIndexSlash+1)); 
+					File outputParent = new File(args3.substring(0,
+							lastIndexSlash+1)); 
 					boolean chkExists = outputParent.exists();
 					boolean chkDir = outputParent.isDirectory();
 					boolean chkDirRead = outputParent.canRead();
@@ -312,19 +331,25 @@ public class ParseInputArguments {
 					
 					if(chkExists && chkDir && chkDirRead && chkDirWrite){
 						OutputImagePathFound = 2;
-						outputImageFileName = args3.substring(lastIndexSlash+1, posDot);
-						outputImageFileExtension = args3.substring(posDot, args3.length());
-						outputImageFileFormat = args3.substring(posDot+1, args3.length());
-						outputImageFilePath = outputParent.getCanonicalPath()+File.separator+outputImageFileName+outputImageFileExtension;
+						outputImageFileName = args3.substring(lastIndexSlash+1,
+								posDot);
+						outputImageFileExtension = args3.substring(posDot,
+								args3.length());
+						outputImageFileFormat = args3.substring(posDot+1,
+								args3.length());
+						outputImageFilePath = outputParent.getCanonicalPath()+
+								File.separator + outputImageFileName +
+								outputImageFileExtension;
 						return true;
 					}
 					else{
-						System.out.println("Please check if the output directory has read and write permissions.");
+						System.out.println("Please check if the output" +
+								"directory has read and write permissions.");
 						System.exit(0);
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					System.out.println("Please check if the output directory has read and write permissions.");
+					System.out.println("Please check if the output directory" +
+							"has read and write permissions.");
 					System.exit(0);
 				}
 			}
@@ -344,7 +369,8 @@ public class ParseInputArguments {
 		else if(lastIndexSlash!=-1){
 			if(lastIndexSlash==args3.length()-1){
 				System.out.println(ERROR);
-				System.out.println("The argument file3 should be a file path and not a directory.");
+				System.out.println("The argument file3 should be a file" +
+						"path and not a directory.");
 				System.exit(0);
 				return false;
 			}
@@ -359,29 +385,31 @@ public class ParseInputArguments {
 					
 					if(chkExists && chkDir && chkDirRead && chkDirWrite){
 						OutputImagePathFound = 4;
-						outputImageFileName = args3.substring(lastIndexSlash+1, args3.length());
+						outputImageFileName = args3.substring
+								(lastIndexSlash+1, args3.length());
 						outputImageFileExtension = "";
-						outputImageFilePath = outputParent.getCanonicalPath()+File.separator+outputImageFileName+outputImageFileExtension;
+						outputImageFilePath = outputParent.getCanonicalPath() +
+								File.separator + outputImageFileName +
+								outputImageFileExtension;
 						return true;
 					}
 					else{
 						System.out.println(ERROR);
-						System.out.println("Please confirm that output directory exists and is writable");
+						System.out.println("Please confirm that output" +
+								"directory exists and is writable");
 						System.exit(0);
 						return false;
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					System.out.println(ERROR);
-					System.out.println("Please confirm that output directory exists and is writable");
+					System.out.println("Please confirm that output" +
+							"directory exists and is writable");
 					System.exit(0);
 					return false;
 				}
-			}
-			
+			}			
 		}
-		return false;
-		 
+		return false;		 
 	}
 	
 	
@@ -426,7 +454,8 @@ public class ParseInputArguments {
 		}
 	}
 
-	/*Function to check number of arguments. It should be atleast 2 and a multiple of 2*/
+	/*Function to check number of arguments. It should be atleast 2
+	 * and a multiple of 2*/
 	private void checkNumberOfArguments(String[] args) {
 		int arg_count = args.length;
 
@@ -437,14 +466,14 @@ public class ParseInputArguments {
 		}
 	}
 
-	/*Method simply checks if the TargetImagePath and TileLibraryDirectory have been specified in the inputs*/
+	/*Method simply checks if the TargetImagePath and TileLibraryDirectory
+	 * have been specified in the inputs*/
 	private void checkMandatoryInputs() {
 		if(TargetImagePathFound == false || TileDirectoryPathFound == false){
 			System.out.println(ERROR);
 			System.out.println("Mandatory inputs not found");
 			System.exit(0);		
-		}
-				
+		}				
 	}
 	
 	public String getTargetImageFilePath()
@@ -465,7 +494,8 @@ public class ParseInputArguments {
 	}
 	public String getTargetImageFileExtenstion()
 	{
-		System.out.println("TargetImageFileExtenstion\t "+targetImageFileExtension);
+		System.out.println("TargetImageFileExtenstion\t "+
+	targetImageFileExtension);
 		return targetImageFileExtension;
 	}
 	public String getTileDirectory()
@@ -481,25 +511,28 @@ public class ParseInputArguments {
 	
 	public String getOutputImageFileExtension()
 	{
-		System.out.println("OutputImageFileExtension\t"+outputImageFileExtension);
+		System.out.println("OutputImageFileExtension\t"+
+	outputImageFileExtension);
 		return outputImageFileExtension;
 	}
 	
 	public String getOutputImageFileFormat()
 	{
-		System.out.println("outputImageFileFormat\t"+outputImageFileFormat);
+		System.out.println("outputImageFileFormat\t"+
+	outputImageFileFormat);
 		return outputImageFileFormat;
 	}
 	public String getOutputImageFileName()
 	{
-		System.out.println("getOutputImageFileName\t"+outputImageFileName);
+		System.out.println("getOutputImageFileName\t"+
+	outputImageFileName);
 		return outputImageFileName;
 	}
 	public String getOutputImageFilePath()
 	{
-		System.out.println("getOutputImageFilePath\t"+outputImageFilePath);
+		System.out.println("getOutputImageFilePath\t"+
+	outputImageFilePath);
 		return outputImageFilePath;
 	}
-	
 }
 
