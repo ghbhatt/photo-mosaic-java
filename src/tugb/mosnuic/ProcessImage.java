@@ -28,17 +28,17 @@ public class ProcessImage {
 	public void split(String filePath,String targetImageFileFormat, int height,
 			int width, String tempFolderOfTargetSplitLocation)
 					throws IOException {
-		// used in the loops
+		/*variables used in the loops*/
 		int x = 0 ; 
 		int y = 0 ;
 		int i = 0 ;
 
-		/*Load target image into memory*/
+		/*load target image into memory*/
 		File file = new File(filePath);
 		FileInputStream fis = new FileInputStream(file);
 		BufferedImage image = ImageIO.read(fis);
 
-		/* calculate target image dimensions*/
+		/*calculate target image dimensions*/
 		int targetImageHeight = image.getHeight();
 		int targetImageWidth = image.getWidth();
 
@@ -77,7 +77,9 @@ public class ProcessImage {
 			}
 		}
 
-		//name the newly created cells to store in a Temp Directory.
+		/*Since we want to preserve the order in which we write the cells to
+		 * the Temp directory, we number them starting from 0 to number of
+		 * tiles available.*/
 		NumberFormat form = NumberFormat.getInstance();
 		form.setMinimumIntegerDigits(4);
 
@@ -86,8 +88,7 @@ public class ProcessImage {
 			ImageIO.write(bi[i], targetImageFileFormat,
 					new File(tempFolderOfTargetSplitLocation + 
 							form.format(i) + "." + targetImageFileFormat));
-		}
-		
+		}		
 	} 
 
 	/*Method to join multiple images to form a single image*/
@@ -115,7 +116,7 @@ public class ProcessImage {
 		FileInputStream fis = new FileInputStream(file);
 		BufferedImage targetImage = ImageIO.read(fis);
 
-		//target image dimensions
+		/*target image dimensions*/
 		int targetImageHeight = targetImage.getHeight();
 		int targetImageWidth = targetImage.getWidth();
 
@@ -128,13 +129,13 @@ public class ProcessImage {
 		int cellWidth = targetImage.getWidth() / cols; 
 		int cellHeight = targetImage.getHeight() / rows;
 
-		// file array to read images from outputArray.
+		//File array to read images from outputArray.
 		File[] imgFiles = new File[totalCells];  
 		for (i = 0; i < totalCells; i++) {  
 			imgFiles[i] = new File(outputArray[i]);  
 		} 
 
-		// array to read images
+		//BufferedImage array to read images
 		BufferedImage[] buffImages = new BufferedImage[totalCells];  
 		for (i = 0; i < totalCells; i++) {  
 			try {

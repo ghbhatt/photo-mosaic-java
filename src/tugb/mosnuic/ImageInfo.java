@@ -11,33 +11,47 @@ public class ImageInfo {
 	protected int red, green , blue;
 	int imageWidth, imageHeight,imageSize; 
 	protected int cieL, cieA, cieB;
-	
-	/*Calculate RGB for an image */
-	public void calculateRGB() {
+
+	/*Calculates RGB of an image by iterating over the height and width of
+	 * the given image.*/
+	/**
+	 * @return		true only if the file read from the tile directory
+	 * 				is an image file identified by BufferedImage.
+	 */
+	public boolean calculateRGB() {
 		
+		/*Catches an exception when BufferedImage reads any file other than 
+		 * an image file.*/
 		try{
 			BufferedImage inputImage = ImageIO.read(new File(filePath));
-			imageWidth = inputImage.getWidth();
-			imageHeight = inputImage.getHeight();
-			imageSize = imageHeight * imageWidth;
+			/*Check to see if any BufferedImage object returns null.*/
+			if(inputImage != null){
+				imageWidth = inputImage.getWidth();
+				imageHeight = inputImage.getHeight();
+				imageSize = imageHeight * imageWidth;
 
-			/*Find RGB for each pixel of the image and return the average
-			 *RGB for the image*/
-			for (int i = 0; i<imageWidth; i++){
-				for(int j = 0 ; j<imageHeight; j++){
-					Color c= new Color(inputImage.getRGB(i, j));
-					red += c.getRed();
-					green += c.getGreen();
-					blue += c.getBlue();
+				/*Find RGB for each pixel of the image and return the average
+				 *RGB for the image*/
+				for (int i = 0; i<imageWidth; i++){
+					for(int j = 0 ; j<imageHeight; j++){
+						Color c= new Color(inputImage.getRGB(i, j));
+						red += c.getRed();
+						green += c.getGreen();
+						blue += c.getBlue();
+					}
 				}
+				rgbToLab(red, green, blue);
 			}
-			rgbToLab(red, green, blue);
+			else{
+				return false;
+			}
 		}catch(Exception e) {
-			System.out.println("File read is not an image.");
+			return false;
 		}
+		return true;
 	}
 
-	/*method to convert the RGB to XYZ and then to CIE LAB*/
+	/*Method to convert the RGB to XYZ and then to CIE LAB*/
 	/**
 	 * @param R			Total Red value of the image.
 	 * @param G			Total Green value of the image
@@ -139,7 +153,5 @@ public class ImageInfo {
 
 	public int getImageSize(){
 		return imageSize;
-	}
-	
-	 
+	}	 
 }

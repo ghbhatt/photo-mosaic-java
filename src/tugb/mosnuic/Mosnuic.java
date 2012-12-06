@@ -23,8 +23,7 @@ public class Mosnuic {
 		boolean check = parser.ParsePath(args);
 		
 		if(check){
-			/* initializing variables and objects.*/
-			long startTime = System.currentTimeMillis();
+			/*Initializing variables and objects.*/
 			ArrayList<ImageInfo> tiles = new ArrayList<ImageInfo>();
 			String targetImage  = parser.getTargetImageFilePath();
 			String targetImageFileFormat = parser.getTargetImageFileFormat();
@@ -33,45 +32,42 @@ public class Mosnuic {
 			String outputFileLocation = parser.getOutputImageFilePath();
 			String outputFileFormat = parser.getOutputImageFileFormat();
 			//Gets current user path to create a Temp Directory
-			//String userPath = System.getProperty("user.dir"); 
-			String tempPath = "/tmp";
+			String userPath = System.getProperty("user.dir"); 
 			
 			int repetition = parser.getMaxNumberOfTiles();
 			String tempFolderOfTargetSplitLocation = 
-					tempPath+"/DemoDirectory/";
+					userPath+"/DemoDirectory/";
 			File tempFolderOfTargetSplit = 
-					new File(tempFolderOfTargetSplitLocation);
+					new File(tempFolderOfTargetSplitLocation);		
 			
-			long sTile = System.currentTimeMillis();;
-			File filepathOfTileLibrary = new File(tileLibrary);
-			
-			/* For each tile, create ImageInfo object to calculate RGB and get
-			 * its location */
+			/*For each tile, create ImageInfo object to calculate RGB and get
+			 * its location.*/
+			File filepathOfTileLibrary = new File(tileLibrary);			
 			for (final File fileEntry : filepathOfTileLibrary.listFiles()) {
-				ImageInfo temp = new ImageInfo();
-				temp.setFilePath(fileEntry.getPath());
-				temp.calculateRGB();
-				tiles.add(temp);
+				/*This check ensures that only files are read from the tile 
+				  directory.*/
+				if(fileEntry.exists() && fileEntry.isFile()){
+					ImageInfo temp = new ImageInfo();
+					temp.setFilePath(fileEntry.getPath());
+					/*calculateRGB() returns true only when an image is
+					 * read from the tile directory. Hence, only when
+					 * an image is read, add it to tiles list.*/
+					if(temp.calculateRGB())
+						tiles.add(temp);
+				}
 			}
 
 			System.out.println("Tile Library processed.");
-			long eTile = System.currentTimeMillis();
-			System.out.println("Time for tile lib: " + (eTile - sTile));
-
-			long timeForDD = System.currentTimeMillis();
-			/* Create a temporary directory to store cells. */
+			
+			/*Create a temporary directory to store cells.*/
 			boolean isDirectoryCreated = tempFolderOfTargetSplit.mkdir();
 			if (!isDirectoryCreated) {			
 				deleteDirectory(tempFolderOfTargetSplit);
 				tempFolderOfTargetSplit.mkdir();
 			}
-			long timeForDD2 = System.currentTimeMillis();
-			System.out.println("Time for Demo Dir: " + (timeForDD2-timeForDD));
 			
-			
-			long sTI = System.currentTimeMillis();
-			/* Load target image and calculate its dimensions to determine if 
-			 * there are enough tiles to create the output image*/
+			/*Load target image and calculate its dimensions to determine if 
+			 * there are enough tiles to create the output image.*/
 			ti = ImageIO.read(new File(targetImage));
 			
 			int targetImageSize  = ti.getHeight() * ti.getWidth();
@@ -80,19 +76,23 @@ public class Mosnuic {
 			int checkTileCount = tiles.size() * repetition; 
 			
 			if(checkTileCount >= totalCells){
-				/* (When target image is split in the tile dimensions,
-				 * each piece is called cell.) */
+				/*(When target image is split in the tile dimensions,
+				 * each piece is called cell.)*/
 				
-				// Process target image to create cells.
+				/*Process target image to create cells.*/
+				try{
 				ProcessImage st = new ProcessImage();
 				st.split(targetImage,targetImageFileFormat,
 						tiles.get(0).getImageHeight(),
 						tiles.get(0).getImageWidth(),
-						tempFolderOfTargetSplitLocation );
+						tempFolderOfTargetSplitLocation);
+				}catch(Exception e){
+					System.out.println("Error in reading images from" +
+							" tile library");
+				}
 				
 				//Creates ImageInfo object for each cell to calculate RGB 
-				ArrayList<ImageInfo> cells = new ArrayList<ImageInfo>();
-				
+				ArrayList<ImageInfo> cells = new ArrayList<ImageInfo>();				
 				for (final File fileEntry : 
 					tempFolderOfTargetSplit.listFiles()) {
 					ImageInfo temp = new ImageInfo();
@@ -100,11 +100,11 @@ public class Mosnuic {
 					temp.calculateRGB();
 					cells.add(temp);
 				}
-				System.out.println("Target image processed.");
-				long eTI = System.currentTimeMillis();
-				System.out.println("Time for TI:" + (eTI - sTI));
 				
-				long sOut = System.currentTimeMillis();
+				System.out.println("Target image processed.");
+				
+				/*Initializing the outputArray to be equal to the size of the
+				 	number of cells.*/
 				outputArray = new String[cells.size()];
 				
 				/*Randomize selection of cells in the list to avoid patterns.*/
@@ -112,31 +112,23 @@ public class Mosnuic {
 				for (int k=0 ; k<cells.size(); k++){
 					numList.add(k);				
 				}
-				long startToShuffle = System.currentTimeMillis();
 				//This inbuilt method shuffles the cells to be selected.
 				Collections.shuffle(numList);
-				long endToShuffle = System.currentTimeMillis();
-				long timeToShuffle = endToShuffle - startToShuffle;
-				System.out.println("Time to shuffle "+timeToShuffle);
+				
 				for(int m=0; m<numList.size(); m++){
 					calculateBestMatchElement(numList.get(m), cells, tiles,
 							repetition);
 				}
 				
-				//Create an object to create an outout image.
+				//Create a ProcessImage object to render the output image.
 				ProcessImage oi = new ProcessImage();
 				oi.renderOutputImage(targetImage,
 						tiles.get(0).getImageHeight(),
 						tiles.get(0).getImageWidth(),
 						outputArray, outputFileLocation, outputFileFormat);
 				
-				//delete the Temp Directory after a successful run.
+				/*Delete the Temp Directory after a successful run.*/
 				deleteDirectory(tempFolderOfTargetSplit);
-				long eOut = System.currentTimeMillis();;
-				System.out.println("Time for output: "+ (eOut - sOut));
-				long endTime   = System.currentTimeMillis();
-				long totalTime = endTime - startTime;
-				System.out.println("Total Time: " +totalTime);
 			}
 			else {
 				System.out.println("Not enough tiles in the library to" +
@@ -149,7 +141,7 @@ public class Mosnuic {
 		}
 	}
 	
-	/*method calculates best match tiles for the random position */
+	/*Method to calculate best match tiles for the random position.*/
 	/**
      * @param pos			position of the cell to be read from the 
      *                      list of cells.
@@ -163,6 +155,8 @@ public class Mosnuic {
 			ArrayList<ImageInfo> cells, ArrayList<ImageInfo> tiles,
 			int repetition) {
 		
+		/*HashMap to store the metric and the file path of the corresponding
+		tile as a <key,value> pair.*/
 		Map <Double,String> rgbDiff = new HashMap<Double,String>();
 		double diff=0.0;
 		
@@ -171,13 +165,13 @@ public class Mosnuic {
 			rgbDiff.put(diff, tiles.get(j).filePath);
 		}
 		
+		//calculate the minimum distance. Thus the best match.
 		double min = Collections.min(rgbDiff.keySet());
 		
-		/*Add the tile with minimum distance to the outputArray in the very
-		 *first iteration for a cell.*/
-		if(pos==0){
+		if(pos==0){ //Add to outputArray for very first iteration.
 			outputArray[pos]=rgbDiff.get(min);
 		}
+		//Add to outputArray if repetitions are valid.
 		else if(pos!=0 && countOccurences(rgbDiff.get(min)) < repetition){
 			outputArray[pos]=rgbDiff.get(min);
 		}
@@ -195,11 +189,10 @@ public class Mosnuic {
 			double min_updated = Collections.min(rgbDiff.keySet());
 			//Add the new minimum to the outputArray
 			outputArray[pos]=rgbDiff.get(min_updated);
-			//System.out.println(pos+"\t"+outputArray[pos]);
 		}	
 	}
 
-	/*Euclidean distance calculation */
+	/*Euclidean distance metric calculation*/
 	/**
      * @param cell			part of the target image object that is being
      * 						compared.
@@ -224,7 +217,7 @@ public class Mosnuic {
 	/**
      * @param directory		File object of the temporary directory.
      * @return				a boolean value. TRUE if the directory is deleted.
-     * 						FALSE if the directory is not deleted.
+     * 						false if the directory is not deleted.
      */
 	public static boolean deleteDirectory(File directory) {
 		if(directory.isDirectory()){
