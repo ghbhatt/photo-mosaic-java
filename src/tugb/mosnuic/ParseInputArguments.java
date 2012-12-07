@@ -40,7 +40,7 @@ public class ParseInputArguments {
 	
 	/*Wrapper class to validate input arguments.*/
 	/**
-	 * @param args 		Array of Strings with input arguments from
+	 * @param args 		Array of Strings as input arguments from
 	 * 					the shell script.
 	 * @return			true if all inputs are valid.
 	 */
@@ -66,7 +66,7 @@ public class ParseInputArguments {
 
 	/*Main function that validates each input one at a time.*/
 	/**
-	 * @param args		Array of Strings with input arguments from
+	 * @param args		Array of Strings as input arguments from
 	 * 					the wrapper class ParsePath.	
 	 * @return			true if the arguments are valid. 
 	 */

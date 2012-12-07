@@ -59,7 +59,10 @@ public class Mosnuic {
 
 			System.out.println("Tile Library processed.");
 			
-			/*Create a temporary directory to store cells.*/
+			/*Create a temporary directory to store cells. 
+			 * This condition here is to handle exception cases, where the
+			 * user would break the process via keyboard interrupt or
+			 * when the program terminates due to an interrupt.*/
 			boolean isDirectoryCreated = tempFolderOfTargetSplit.mkdir();
 			if (!isDirectoryCreated) {			
 				deleteDirectory(tempFolderOfTargetSplit);
@@ -132,7 +135,7 @@ public class Mosnuic {
 			}
 			else {
 				System.out.println("Not enough tiles in the library to" +
-						"create an output image.");
+						" create an output image.");
 				System.exit(0);
 			}
 		}else {

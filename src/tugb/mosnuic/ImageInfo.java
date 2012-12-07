@@ -122,7 +122,7 @@ public class ImageInfo {
 		cieB = (int) (bs + .5);     
 	}
 
-	/* Getters and setters for the ImageInfo objects */
+	/* Getters and setters for the ImageInfo data members. */
 	public void setFilePath(String filePathOfImage){
 		filePath = filePathOfImage;
 	}
